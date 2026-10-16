@@ -1,4 +1,5 @@
-package cl.duoc.basico.ui
+package com.duoc.maderita.ui.theme
+
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
