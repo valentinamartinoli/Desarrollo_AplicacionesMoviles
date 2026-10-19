@@ -2,10 +2,15 @@ package com.duoc.maderita
 
 import android.os.*
 import androidx.activity.*
-import androidx.compose.*
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
+import androidx.compose.ui.tooling.preview.Preview
 import com.duoc.maderita.ui.theme.MaderitaTheme
 
 class MainActivity : ComponentActivity() {
