@@ -11,10 +11,15 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.duoc.maderita.ui.theme.MaderitaTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,6 +29,7 @@ class MainActivity : ComponentActivity() {
             MaderitaTheme {
                 var nombre by remember { mutableStateOf("") }
                 var modal by remember { mutableStateOf(false) }
+                var cargando by remember { mutableStateOf(false) }
 
                 fun abrirModal() {
                     modal = true;
@@ -44,8 +50,27 @@ class MainActivity : ComponentActivity() {
                         onValueChange = { nombre = it },
                         label = { Text("Ingresa nombre") }
                     )
-                    Button(onClick = { abrirModal() }) {
-                        Text(text = "Enviar")
+
+                    Button(
+                        onClick = {
+                            cargando = true
+                            CoroutineScope(Dispatchers.Main).launch {
+                                delay(2000)
+                                cargando = false
+                            }
+                        },
+                        enabled = !cargando
+
+                    ) {
+                        if (cargando) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(20.dp),
+                                strokeWidth = 2.dp,
+                                color = Color.White
+                            )
+                        } else {
+                            Text("Enviar")
+                        }
                     }
                 }
 
