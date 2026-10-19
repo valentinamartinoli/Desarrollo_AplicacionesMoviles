@@ -1,4 +1,4 @@
-package com.duoc.maderita.ui.theme
+package com.duoc.maderita.ui
 
 
 import androidx.compose.foundation.layout.Arrangement
