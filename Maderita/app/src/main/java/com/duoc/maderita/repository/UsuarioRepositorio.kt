@@ -5,7 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import com.duoc.maderita.Usuario
 
-object UsuarioRepository {
+object UsuarioRepositorio {
     private var _usuarios by mutableStateOf(listOf<Usuario>())
     val usuarios: List<Usuario> get() = _usuarios
     private var nextId = 1
