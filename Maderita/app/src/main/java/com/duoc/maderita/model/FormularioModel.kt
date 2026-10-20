@@ -1,4 +1,4 @@
-package com.duoc.maderita
+package com.duoc.maderita.model
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
