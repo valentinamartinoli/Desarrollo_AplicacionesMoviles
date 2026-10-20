@@ -1,25 +1,15 @@
 package com.duoc.maderita
 
-import android.os.*
-import androidx.activity.*
-import androidx.activity.compose.*
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.*
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import com.duoc.maderita.ui.RegistroScreen
 import com.duoc.maderita.ui.theme.MaderitaTheme
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,53 +17,11 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             MaderitaTheme {
-                var nombre by remember { mutableStateOf("") }
-                var modal by remember { mutableStateOf(false) }
-                var cargando by remember { mutableStateOf(false) }
-
-                fun abrirModal() {
-                    modal = true;
-                }
-
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Image(
-                        painter = painterResource(id=R.drawable.maderita),
-                        contentDescription = "Img Login",
-                        modifier = Modifier.size(150.dp)
-                    )
-                    OutlinedTextField(
-                        value = nombre,
-                        onValueChange = { nombre = it },
-                        label = { Text("Ingresa nombre") }
-                    )
-
-                    Button(
-                        onClick = {
-                            cargando = true
-                            CoroutineScope(Dispatchers.Main).launch {
-                                delay(2000)
-                                cargando = false
-                            }
-                        },
-                        enabled = !cargando
-
-                    ) {
-                        if (cargando) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(20.dp),
-                                strokeWidth = 2.dp,
-                                color = Color.White
-                            )
-                        } else {
-                            Text("Enviar")
-                        }
+                Scaffold { paddingInterno ->
+                    Box(modifier = Modifier.padding(paddingInterno)) {
+                        RegistroScreen()
                     }
                 }
-
             }
         }
     }
