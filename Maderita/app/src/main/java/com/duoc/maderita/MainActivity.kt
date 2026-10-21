@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
+import com.duoc.maderita.ui.Navegacion
 import com.duoc.maderita.ui.RegistroScreen
 import com.duoc.maderita.ui.theme.MaderitaTheme
 
@@ -19,7 +20,7 @@ class MainActivity : ComponentActivity() {
             MaderitaTheme {
                 Scaffold { paddingInterno ->
                     Box(modifier = Modifier.padding(paddingInterno)) {
-                        RegistroScreen()
+                        Navegacion()
                     }
                 }
             }
