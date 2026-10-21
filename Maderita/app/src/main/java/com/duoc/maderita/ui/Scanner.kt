@@ -7,8 +7,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.*
-import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,9 +17,11 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.duoc.maderita.R
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -41,6 +43,7 @@ fun Scanner(navController: NavController) {
         ),
         label = "lineY"
     )
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -86,11 +89,10 @@ fun Scanner(navController: NavController) {
                     contentDescription = "Madera a escanear",
                     modifier = Modifier.size(160.dp)
                 )
-
-                // Línea verde animada si está escaneando
                 if (escanearEstado) {
                     Canvas(modifier = Modifier.fillMaxSize()) {
                         val lineY = size.height * offsetY
+
                         drawLine(
                             color = Color(0xFF00FF66),
                             start = Offset(0f, lineY),
@@ -102,13 +104,13 @@ fun Scanner(navController: NavController) {
             }
 
             Spacer(modifier = Modifier.height(32.dp))
+
             Button(
                 onClick = {
                     escanearEstado = true
                     scope.launch {
                         delay(2000) // Simula 2 segundos de lectura
                         escanearEstado = false
-                        // Para probar éxito o error, simulamos éxito por defecto:
                         mostrarExito = true
                     }
                 },
@@ -132,7 +134,6 @@ fun Scanner(navController: NavController) {
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Botón secundario para probar el Pop-Up de Error (según tu dibujo)
             TextButton(onClick = { mostrarError = true }) {
                 Text("Simular Error de Lectura", color = Color.LightGray)
             }
@@ -146,7 +147,7 @@ fun Scanner(navController: NavController) {
                     Button(
                         onClick = {
                             mostrarExito = false
-                            navController.navigate("detalleMadera") // Va a la ficha técnica
+                            navController.navigate("detalleMadera")
                         }
                     ) {
                         Text("Ver Ficha Madera #1")
@@ -172,4 +173,11 @@ fun Scanner(navController: NavController) {
             )
         }
     }
+}
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun ScannerPreview() {
+    val navController = rememberNavController()
+    Scanner(navController = navController)
 }
