@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+        <!-- Tema de la Splash Screen -->
+        <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+            <!-- Fondo de la splash screen -->
+            <item name="windowSplashScreenBackground">@color/white</item>
+
+            <!-- Icono central (puede ser un VectorDrawable o Drawable animado) -->
+            <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
+
+            <!-- Duración de la animación del icono (opcional) -->
+            <item name="windowSplashScreenAnimationDuration">1000</item>
+
+            <!-- Tema que tomará la app al finalizar la splash screen -->
+            <item name="postSplashScreenTheme">@style/Theme.Maderita</item>
+        </style>
 
     <style name="Theme.Maderita" parent="android:Theme.Material.Light.NoActionBar" />
 </resources>
