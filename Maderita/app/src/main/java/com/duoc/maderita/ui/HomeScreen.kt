@@ -34,7 +34,7 @@ fun HomeScreen(navController: NavController) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
-                painter = painterResource(id = R.drawable.maderita),
+                painter = painterResource(id = R.drawable.logo_maderita),
                 contentDescription = "Logo",
                 modifier = Modifier.size(48.dp)
             )
