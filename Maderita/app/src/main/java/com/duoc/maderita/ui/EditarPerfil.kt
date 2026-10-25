@@ -21,7 +21,7 @@ import com.duoc.maderita.R
 import com.duoc.maderita.repository.UsuarioRepositorio
 
 @Composable
-fun c(navController: NavController) {
+fun EditarPerfil(navController: NavController) {
     val usuario = UsuarioRepositorio.usuarioActual
 
     var nombreCompleto by remember { mutableStateOf("${usuario.nombre} ${usuario.apellido}") }

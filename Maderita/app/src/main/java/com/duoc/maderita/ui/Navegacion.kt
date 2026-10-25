@@ -11,10 +11,12 @@ fun Navegacion() {
 
     NavHost(navController = navController, startDestination = "login") {
         composable("login") { Login(navController = navController) }
-        composable("registro") { RegistroScreen(navController = navController) }                // CAMBIA: ahora recibe navController
+        composable("registro") { RegistroScreen(navController = navController) }
         composable("home") { HomeScreen(navController = navController) }
         composable("escaner") { Scanner(navController = navController) }
-        composable("agregarUsuarios") { AgregarUsuarios(navController = navController) }       // CAMBIA: ahora recibe navController
-        composable("listaUsuarios") { ListaUsuarios(navController = navController) }           // NUEVA: pantalla "Ver registro usuarios"
+        composable("perfil") { PerfilUsuario(navController = navController) }
+        composable("editarPerfil") { EditarPerfil(navController = navController) }
+        composable("agregarUsuarios") { AgregarUsuarios(navController = navController) }
+        composable("listaUsuarios") { ListaUsuarios(navController = navController) }
     }
 }
