@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -11,21 +12,20 @@ import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.duoc.maderita.ui.Navegacion
 import com.duoc.maderita.ui.theme.MaderitaTheme
+import com.duoc.maderita.viewmodel.CargaViewModel
 
 class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        // Se inicializa la Splash Screen antes de super.onCreate
-        installSplashScreen()
+    private val cargaViewModel: CargaViewModel by viewModels()
+
+    override fun onCreate(savedInstanceState: Bundle?) {         // La splash se mantiene visible hasta que el ViewModel indique que la app está lista
+        val splash = installSplashScreen()
+        splash.setKeepOnScreenCondition { !cargaViewModel.listo.value }
 
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
         setContent {
             MaderitaTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
+                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
                     Navegacion()
                 }
             }
