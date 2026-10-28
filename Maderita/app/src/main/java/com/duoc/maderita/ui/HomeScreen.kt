@@ -1,6 +1,7 @@
 package com.duoc.maderita.ui
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -26,10 +27,8 @@ import androidx.navigation.NavController
 import com.duoc.maderita.R
 import com.duoc.maderita.repository.MaderaRepositorio
 import com.duoc.maderita.repository.UsuarioRepositorio
+import com.duoc.maderita.ui.theme.*
 
-private val VerdePastelPrimario = Color(0xFF52B788)
-private val VerdePastelFondoCard = Color(0xFFD8F3DC)
-private val VerdeTextoOscuro = Color(0xFF1B4332)
 
 @Composable
 fun HomeScreen(navController: NavController) {
@@ -39,11 +38,12 @@ fun HomeScreen(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(FondoCrema)
             .systemBarsPadding()
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Encabezado Superior
+        // header(?
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -60,14 +60,14 @@ fun HomeScreen(navController: NavController) {
                     text = "Maderita",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
-                    color = VerdeTextoOscuro
+                    color = TextoOscuro
                 )
             }
             IconButton(onClick = { navController.navigate("perfil") }) {
                 Icon(
                     imageVector = Icons.Default.Person,
                     contentDescription = "Perfil",
-                    tint = MaterialTheme.colorScheme.primary,
+                    tint = VerdeBoton,
                     modifier = Modifier.size(30.dp)
                 )
             }
@@ -81,7 +81,7 @@ fun HomeScreen(navController: NavController) {
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(
-                containerColor = VerdePastelFondoCard
+                containerColor = VerdePalido
             )
         ) {
             Row(
@@ -96,7 +96,7 @@ fun HomeScreen(navController: NavController) {
                     modifier = Modifier
                         .size(52.dp)
                         .clip(CircleShape)
-                        .border(2.dp, MaterialTheme.colorScheme.primary, CircleShape)
+                        .border(2.dp, VerdeBoton, CircleShape)
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 Column(modifier = Modifier.weight(1f)) {
@@ -104,19 +104,19 @@ fun HomeScreen(navController: NavController) {
                         text = "¡Hola, ${usuario.nombre}!",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = VerdeTextoOscuro.copy(alpha = 0.8f)
+                        color = TextoOscuro
                     )
                     Text(
                         text = usuario.correo,
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
+                        color = TextoOscuro.copy(alpha = 0.8f)
                     )
                 }
                 Text(
                     text = "Ver perfil >",
                     style = MaterialTheme.typography.labelMedium,
                     fontWeight = FontWeight.Bold,
-                    color = VerdeTextoOscuro
+                    color = TextoOscuro
                 )
             }
         }
@@ -133,7 +133,7 @@ fun HomeScreen(navController: NavController) {
                 modifier = Modifier.weight(1f),
                 shape = RoundedCornerShape(16.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = VerdePastelFondoCard.copy(alpha = 0.5f)
+                    containerColor = VerdePalido
                 )
             ) {
                 Column(
@@ -144,10 +144,10 @@ fun HomeScreen(navController: NavController) {
                         imageVector = Icons.Default.Search,
                         contentDescription = "Scanner",
                         modifier = Modifier.size(36.dp),
-                        tint = VerdePastelPrimario
+                        tint = VerdeBoton
                     )
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text("Scanner", fontWeight = FontWeight.Bold, color = VerdeTextoOscuro)
+                    Text("Scanner", fontWeight = FontWeight.Bold, color = TextoOscuro)
                 }
             }
 
@@ -156,7 +156,7 @@ fun HomeScreen(navController: NavController) {
                 modifier = Modifier.weight(1f),
                 shape = RoundedCornerShape(16.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = VerdePastelFondoCard.copy(alpha = 0.5f)
+                    containerColor = VerdePalido
                 )
             ) {
                 Column(
@@ -165,7 +165,7 @@ fun HomeScreen(navController: NavController) {
                 ) {
                     Text("🪵", fontSize = 32.sp)
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text("Detalle Madera", fontWeight = FontWeight.Bold, color = VerdeTextoOscuro)
+                    Text("Detalle Madera", fontWeight = FontWeight.Bold, color = TextoOscuro)
                 }
             }
         }
@@ -176,7 +176,7 @@ fun HomeScreen(navController: NavController) {
         Text(
             text = "Ejemplos de Madera",
             style = MaterialTheme.typography.titleMedium,
-            color = VerdeTextoOscuro,
+            color = TextoOscuro,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
                 .align(Alignment.Start)
@@ -192,7 +192,10 @@ fun HomeScreen(navController: NavController) {
             items(maderasEjemplo) { madera ->
                 Card(
                     onClick = { navController.navigate("detalleMadera") },
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(12.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = VerdePalido.copy(alpha = 0.5f)
+                    )
                 ) {
                     Column(
                         modifier = Modifier
@@ -210,6 +213,7 @@ fun HomeScreen(navController: NavController) {
                             text = madera.nombre,
                             fontSize = 13.sp,
                             fontWeight = FontWeight.SemiBold,
+                            color = TextoOscuro,
                             textAlign = TextAlign.Center
                         )
                     }
