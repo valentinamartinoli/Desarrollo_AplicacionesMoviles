@@ -89,7 +89,7 @@ fun Scanner(navController: NavController) {
                 contentAlignment = Alignment.Center
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.maderita),
+                    painter = painterResource(id = R.drawable.logo_splash),
                     contentDescription = "Tronco madera",
                     modifier = Modifier.size(160.dp)
                 )
