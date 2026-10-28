@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.duoc.maderita.R
+import com.duoc.maderita.repository.SesionRepositorio
 import com.duoc.maderita.repository.UsuarioRepositorio
 import com.duoc.maderita.ui.theme.*
 
@@ -118,6 +119,8 @@ fun PerfilUsuario(navController: NavController) {
                     }
                     OutlinedButton(
                         onClick = {
+                            // Borra la sesión guardada para que la app abra en el login la próxima vez
+                            SesionRepositorio.cerrarSesion()
                             navController.navigate("login") {
                                 popUpTo(0)
                             }
