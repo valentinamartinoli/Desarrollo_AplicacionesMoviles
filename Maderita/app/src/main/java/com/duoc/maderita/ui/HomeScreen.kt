@@ -1,7 +1,12 @@
 package com.duoc.maderita.ui
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
@@ -10,64 +15,121 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.duoc.maderita.R
+import com.duoc.maderita.repository.MaderaRepositorio
+import com.duoc.maderita.repository.UsuarioRepositorio
 
 @Composable
 fun HomeScreen(navController: NavController) {
+    val usuario = UsuarioRepositorio.usuarioActual
+    val maderasEjemplo = MaderaRepositorio.obtenerMaderas().take(4)
+
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .systemBarsPadding()
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Encabezado con Botón de Perfil
+        // Encabezado Superior
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp),
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.logo_maderita),
-                contentDescription = "Logo",
-                modifier = Modifier.size(48.dp)
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Image(
+                    painter = painterResource(id = R.drawable.maderita),
+                    contentDescription = "Logo",
+                    modifier = Modifier.size(40.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "Maderita",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
             IconButton(onClick = { navController.navigate("perfil") }) {
                 Icon(
                     imageVector = Icons.Default.Person,
                     contentDescription = "Perfil",
-                    modifier = Modifier.size(32.dp)
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(30.dp)
                 )
             }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(
-            text = "Bienvenid@ a Maderita",
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Bold
-        )
+        // Un card con el profile del usuario
+        Card(
+            onClick = { navController.navigate("perfil") },
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer
+            )
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.maderita),
+                    contentDescription = "Foto Perfil",
+                    modifier = Modifier
+                        .size(52.dp)
+                        .clip(CircleShape)
+                        .border(2.dp, MaterialTheme.colorScheme.primary, CircleShape)
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = "¡Hola, ${usuario.nombre}!",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                    Text(
+                        text = usuario.correo,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
+                    )
+                }
+                Text(
+                    text = "Ver perfil >",
+                    style = MaterialTheme.typography.labelMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+        }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
-        // Botones Principales (Buscador/Escáner, Tienda, Cuidado)
+        // botoness
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Card(
                 onClick = { navController.navigate("escaner") },
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(8.dp),
-                shape = RoundedCornerShape(16.dp)
+                modifier = Modifier.weight(1f),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                )
             ) {
                 Column(
                     modifier = Modifier.padding(16.dp),
@@ -76,7 +138,8 @@ fun HomeScreen(navController: NavController) {
                     Icon(
                         imageVector = Icons.Default.Search,
                         contentDescription = "Scanner",
-                        modifier = Modifier.size(36.dp)
+                        modifier = Modifier.size(36.dp),
+                        tint = MaterialTheme.colorScheme.primary
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text("Scanner", fontWeight = FontWeight.Bold)
@@ -84,48 +147,67 @@ fun HomeScreen(navController: NavController) {
             }
 
             Card(
-                onClick = { /* Tienda */ },
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(8.dp),
-                shape = RoundedCornerShape(16.dp)
+                onClick = { navController.navigate("detalleMadera") },
+                modifier = Modifier.weight(1f),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                )
             ) {
                 Column(
                     modifier = Modifier.padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text("🏬", fontSize = 28.sp)
+                    Text("🪵", fontSize = 32.sp)
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text("Tienda", fontWeight = FontWeight.Bold)
+                    Text("Detalle Madera", fontWeight = FontWeight.Bold)
                 }
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Ejmplos de maderitas
         Text(
-            text = "Tipos de Madera",
+            text = "Ejemplos de Madera",
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
                 .align(Alignment.Start)
-                .padding(vertical = 8.dp)
+                .padding(bottom = 12.dp)
         )
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.weight(1f)
         ) {
-            Button(
-                onClick = { navController.navigate("tiposMadera") },
-                modifier = Modifier.weight(1f)
-            ) {
-                Text("Tipos de madera")
-            }
-            OutlinedButton(
-                onClick = { navController.navigate("agregarUsuarios") },
-                modifier = Modifier.weight(1f)
-            ) {
-                Text("Usuarios")
+            items(maderasEjemplo) { madera ->
+                Card(
+                    onClick = { navController.navigate("detalleMadera") },
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(12.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Image(
+                            painter = painterResource(id = madera.imagen),
+                            contentDescription = madera.nombre,
+                            modifier = Modifier.size(50.dp)
+                        )
+                        Spacer(modifier = Modifier.height(6.dp))
+                        Text(
+                            text = madera.nombre,
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
             }
         }
     }
