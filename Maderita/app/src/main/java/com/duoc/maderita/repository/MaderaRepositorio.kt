@@ -11,13 +11,13 @@ object MaderaRepositorio {
         Madera(id = 1, nombre = "Avellano", imagen = R.drawable.madera1),
         Madera(id = 2, nombre = "Ciprés de las Guatecas", imagen = R.drawable.madera2),
         Madera(id = 3, nombre = "Coigüe", imagen = R.drawable.madera3),
-        Madera(id = 4, nombre = "Eucalipto", imagen = R.drawable.madera4),
-        Madera(id = 5, nombre = "Laurel", imagen = R.drawable.madera5),
-        Madera(id = 6, nombre = "Lenga", imagen = R.drawable.madera6),
-        Madera(id = 7, nombre = "Pino radiata", imagen = R.drawable.madera7),
-        Madera(id = 8, nombre = "Raulí", imagen = R.drawable.madera8),
-        Madera(id = 9, nombre = "Roble", imagen = R.drawable.madera9),
-        Madera(id = 10, nombre = "Tepa", imagen = R.drawable.madera10)
+        Madera(id = 4, nombre = "Laurel", imagen = R.drawable.madera4),
+        Madera(id = 5, nombre = "Lenga", imagen = R.drawable.madera5),
+        Madera(id = 6, nombre = "Pino radiata", imagen = R.drawable.madera6),
+        Madera(id = 7, nombre = "Raulí", imagen = R.drawable.madera7),
+        Madera(id = 8, nombre = "Roble", imagen = R.drawable.madera8),
+        Madera(id = 9, nombre = "Tepa", imagen = R.drawable.madera9),
+        Madera(id = 10, nombre = "Ulmo", imagen = R.drawable.maderita)
     )
 
     fun obtenerMaderas(): List<Madera> = maderas
