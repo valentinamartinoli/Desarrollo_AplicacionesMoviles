@@ -11,7 +11,7 @@ object MaderaRepositorio {
         Madera(
             id = 1,
             nombre = "Avellano chileno",
-            imagen = R.drawable.madera1,
+            imagen = R.drawable.maderaavellano,
             nombreCientifico = "Gevuina avellana",
             origen = "Nativa",
             dureza = "Semidura",
@@ -23,7 +23,7 @@ object MaderaRepositorio {
         Madera(
             id = 2,
             nombre = "Ciprés de la cordillera",
-            imagen = R.drawable.madera2,
+            imagen = R.drawable.maderacipres,
             nombreCientifico = "Austrocedrus chilensis",
             origen = "Nativa",
             dureza = "Blanda",
@@ -35,7 +35,7 @@ object MaderaRepositorio {
         Madera(
             id = 3,
             nombre = "Coigüe/Coihue",
-            imagen = R.drawable.madera3,
+            imagen = R.drawable.maderacoigue,
             nombreCientifico = "Nothofagus dombeyi",
             origen = "Nativa" ,
             dureza = "Dura",
@@ -47,7 +47,7 @@ object MaderaRepositorio {
         Madera(
             id = 4,
             nombre = "Laurel",
-            imagen = R.drawable.madera4,
+            imagen = R.drawable.maderalaurel,
             nombreCientifico = "Laurelia sempervirens",
             origen = "Nativa",
             dureza = "Blanda",
@@ -58,7 +58,7 @@ object MaderaRepositorio {
         Madera(
             id = 5,
             nombre = "Lenga",
-            imagen = R.drawable.madera5,
+            imagen = R.drawable.maderalenga,
             nombreCientifico = "Nothofagus pumilio",
             origen = "Nativa",
             dureza = "Semidura",
@@ -70,7 +70,7 @@ object MaderaRepositorio {
         Madera(
             id = 6,
             nombre = "Pino Radiata",
-            imagen = R.drawable.madera6,
+            imagen = R.drawable.maderapino,
             nombreCientifico = "Pinus radiata",
             origen = "Introducida",
             dureza = "Blanda",
@@ -82,7 +82,7 @@ object MaderaRepositorio {
         Madera(
             id = 7,
             nombre = "Raulí",
-            imagen = R.drawable.madera7,
+            imagen = R.drawable.maderarauli,
             nombreCientifico = "Nothofagus alpina",
             origen = "Nativa",
             dureza = "Semidura",
@@ -94,7 +94,7 @@ object MaderaRepositorio {
         Madera(
             id = 8,
             nombre = "Roble",
-            imagen = R.drawable.madera8,
+            imagen = R.drawable.maderaroble,
             nombreCientifico = "Nothofagus obliqua",
             origen = "Nativa",
             dureza = "Dura",
@@ -106,7 +106,7 @@ object MaderaRepositorio {
         Madera(
             id = 9,
             nombre = "Tepa",
-            imagen = R.drawable.madera9,
+            imagen = R.drawable.maderatepa,
             nombreCientifico = "Laureliopsis philippiana",
             origen = "Nativa",
             dureza = "Blanda",
@@ -118,7 +118,7 @@ object MaderaRepositorio {
         Madera(
             id = 10,
             nombre = "Ulmo",
-            imagen = ,
+            imagen = R.drawable.maderaulmo,
             nombreCientifico = "Eucryphia cordifolia",
             origen = "Nativa",
             dureza = "Dura",

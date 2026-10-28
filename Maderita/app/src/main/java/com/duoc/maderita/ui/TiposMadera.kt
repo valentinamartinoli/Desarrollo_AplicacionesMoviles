@@ -51,8 +51,7 @@ fun TiposMadera(navController: NavController) {
             items(maderas, key = { it.id }) { madera ->
                 TarjetaMadera(
                     madera = madera,
-                    onClick = {
-                    }
+                    onClick = { navController.navigate("detalleMadera/${madera.id}") }
                 )
             }
 
