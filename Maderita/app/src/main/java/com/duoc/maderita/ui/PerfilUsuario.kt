@@ -24,12 +24,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.duoc.maderita.R
 import com.duoc.maderita.repository.UsuarioRepositorio
-
-// Paleta de colores verde pálido
-private val FondoCrema = Color(0xFFF0F1E5)
-private val VerdePalido = Color(0xFFC2CFB0)
-private val VerdeBoton = Color(0xFF7EAA6E)
-private val TextoOscuro = Color(0xFF1F4D36)
+import com.duoc.maderita.ui.theme.*
 
 @Composable
 fun PerfilUsuario(navController: NavController) {

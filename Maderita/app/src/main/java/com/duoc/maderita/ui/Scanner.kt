@@ -21,12 +21,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.duoc.maderita.R
+import com.duoc.maderita.ui.theme.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-
-private val VerdePastelPrimario = Color(0xFF52B788)
-private val VerdePastelFondo = Color(0xFFF1F8F5)
-private val VerdeTextoOscuro = Color(0xFF1B4332)
 
 @Composable
 fun Scanner(navController: NavController) {
@@ -49,7 +46,7 @@ fun Scanner(navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(VerdePastelFondo)
+            .background(FondoCrema)
             .systemBarsPadding()
     ) {
         Row(
@@ -62,12 +59,12 @@ fun Scanner(navController: NavController) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Volver",
-                    tint = VerdeTextoOscuro
+                    tint = TextoOscuro
                 )
             }
             Text(
                 text = "Escanear Madera",
-                color = VerdeTextoOscuro,
+                color = TextoOscuro,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(start = 8.dp)
@@ -84,8 +81,8 @@ fun Scanner(navController: NavController) {
             Box(
                 modifier = Modifier
                     .size(280.dp)
-                    .border(3.dp, VerdePastelPrimario, RoundedCornerShape(16.dp))
-                    .background(Color.White.copy(alpha = 0.8f)),
+                    .border(3.dp, VerdeBoton, RoundedCornerShape(16.dp))
+                    .background(VerdePalido.copy(alpha = 0.4f)),
                 contentAlignment = Alignment.Center
             ) {
                 Image(
@@ -97,8 +94,9 @@ fun Scanner(navController: NavController) {
                 if (escanearEstado) {
                     Canvas(modifier = Modifier.fillMaxSize()) {
                         val lineY = size.height * offsetY
+
                         drawLine(
-                            color = VerdePastelPrimario,
+                            color = VerdeBoton,
                             start = Offset(0f, lineY),
                             end = Offset(size.width, lineY),
                             strokeWidth = 6f
@@ -108,7 +106,7 @@ fun Scanner(navController: NavController) {
             }
 
             Spacer(modifier = Modifier.height(32.dp))
-//boton del scanner
+            //boton del scanner
             Button(
                 onClick = {
                     escanearEstado = true
@@ -119,7 +117,7 @@ fun Scanner(navController: NavController) {
                     }
                 },
                 enabled = !escanearEstado,
-                colors = ButtonDefaults.buttonColors(containerColor = VerdePastelPrimario),
+                colors = ButtonDefaults.buttonColors(containerColor = VerdeBoton),
                 modifier = Modifier
                     .fillMaxWidth(0.7f)
                     .height(50.dp),
@@ -139,43 +137,43 @@ fun Scanner(navController: NavController) {
             Spacer(modifier = Modifier.height(12.dp))
 
             TextButton(onClick = { mostrarError = true }) {
-                Text("Simular Error de Lectura", color = Color.Gray)
+                Text("Simular Error de Lectura", color = TextoOscuro.copy(alpha = 0.6f))
             }
         }
-//pop out de funcionóo
+        //pop out de funcionóo
         if (mostrarExito) {
             AlertDialog(
                 onDismissRequest = { mostrarExito = false },
                 shape = RoundedCornerShape(20.dp),
-                containerColor = Color.White,
-                title = { Text("¡Escaneo Exitoso!", fontWeight = FontWeight.Bold, color = VerdeTextoOscuro) },
-                text = { Text("Esta es la Madera #1 (Trepén)", color = Color.Black) },
+                containerColor = VerdePalido,
+                title = { Text("¡Escaneo Exitoso!", fontWeight = FontWeight.Bold, color = TextoOscuro) },
+                text = { Text("Esta es la Madera #1 (Trepén)", color = TextoOscuro) },
                 confirmButton = {
                     Button(
                         onClick = {
                             mostrarExito = false
                             navController.navigate("detalleMadera")
                         },
-                        colors = ButtonDefaults.buttonColors(containerColor = VerdePastelPrimario)
+                        colors = ButtonDefaults.buttonColors(containerColor = VerdeBoton)
                     ) {
                         Text("Ver Ficha Madera #1", color = Color.White)
                     }
                 },
                 dismissButton = {
                     TextButton(onClick = { mostrarExito = false }) {
-                        Text("OK", color = VerdeTextoOscuro)
+                        Text("OK", color = TextoOscuro)
                     }
                 }
             )
         }
-//Pop out error
+        //Pop out error
         if (mostrarError) {
             AlertDialog(
                 onDismissRequest = { mostrarError = false },
                 shape = RoundedCornerShape(20.dp),
-                containerColor = Color.White,
+                containerColor = VerdePalido,
                 title = { Text("Error de Lectura", color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.Bold) },
-                text = { Text("No se pudo detectar el tipo de madera. Intenta enfocar nuevamente.", color = Color.Black) },
+                text = { Text("No se pudo detectar el tipo de madera. Intenta enfocar nuevamente.", color = TextoOscuro) },
                 confirmButton = {
                     Button(
                         onClick = { mostrarError = false },
