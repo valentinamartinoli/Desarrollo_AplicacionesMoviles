@@ -150,7 +150,7 @@ fun HomeScreen(navController: NavController) {
                     Text("Scanner", fontWeight = FontWeight.Bold, color = TextoOscuro)
                 }
             }
-
+// madera
             Card(
                 onClick = { navController.navigate("detalleMadera") },
                 modifier = Modifier.weight(1f),
@@ -184,7 +184,7 @@ fun HomeScreen(navController: NavController) {
         )
 
         LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
+            columns = GridCells.Fixed(3),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
             modifier = Modifier.weight(1f)
