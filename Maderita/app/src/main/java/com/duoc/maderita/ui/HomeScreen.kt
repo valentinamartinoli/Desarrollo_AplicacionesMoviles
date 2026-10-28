@@ -116,10 +116,10 @@ fun HomeScreen(navController: NavController) {
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Button(
-                onClick = { navController.navigate("detalleMadera") },
+                onClick = { navController.navigate("tiposMadera") },
                 modifier = Modifier.weight(1f)
             ) {
-                Text("Madera #1 (Trepén)")
+                Text("Tipos de madera")
             }
             OutlinedButton(
                 onClick = { navController.navigate("agregarUsuarios") },

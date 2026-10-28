@@ -17,6 +17,7 @@ fun Navegacion() {
         composable("perfil") { PerfilUsuario(navController = navController) }
         composable("editarPerfil") { EditarPerfil(navController = navController) }
         composable("agregarUsuarios") { AgregarUsuarios(navController = navController) }
-        composable("listaUsuarios") { ListaUsuarios(navController = navController) }
+        composable("tiposMadera") { TiposMadera(navController = navController) }
+
     }
 }
