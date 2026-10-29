@@ -1,19 +1,10 @@
-import android.Manifest
 import android.graphics.Bitmap
 import android.net.Uri
 import android.provider.MediaStore
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import java.io.File
 
@@ -50,28 +41,5 @@ fun CamaraFotos() {
             imageUri = uri
             takePictureLauncher.launch(uri)
         }
-    }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        if (bitmap != null) {
-            Image(
-                bitmap = bitmap!!.asImageBitmap(),
-                contentDescription = "Foto de perfil",
-                modifier = Modifier.size(200.dp)
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-        }
-        Button(onClick = {
-            cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
-        }) {
-            Text("Tomar foto de perfil")
-        }
-        Spacer(modifier = Modifier.height(16.dp))
     }
 }
