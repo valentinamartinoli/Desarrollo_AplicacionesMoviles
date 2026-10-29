@@ -13,7 +13,7 @@ class CargaViewModel : ViewModel(){
 
     init {
         viewModelScope.launch {
-            delay(1500)
+            delay(3000)
             _listo.value = true
         }
     }

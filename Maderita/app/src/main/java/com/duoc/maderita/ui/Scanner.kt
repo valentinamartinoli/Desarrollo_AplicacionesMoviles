@@ -147,7 +147,7 @@ fun Scanner(navController: NavController) {
                 shape = RoundedCornerShape(20.dp),
                 containerColor = VerdePalido,
                 title = { Text("¡Escaneo Exitoso!", fontWeight = FontWeight.Bold, color = TextoOscuro) },
-                text = { Text("Esta es la Madera #1 (Trepén)", color = TextoOscuro) },
+                text = { Text("Esta es la Madera #1 (Avellano chileno)", color = TextoOscuro) },
                 confirmButton = {
                     Button(
                         onClick = {
