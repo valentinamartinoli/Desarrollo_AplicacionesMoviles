@@ -16,7 +16,7 @@ object MaderaRepositorio {
             origen = "Nativa",
             dureza = "Semidura",
             descripcion = "Madera clara con manchas o jaspeados rojizos que la hacen muy decorativa." +
-                    "Se encuentra entre la Región de Valparíso y la Región de Los Lagos." +
+                    "Se encuentra entre la Región de Valparaíso y la Región de Los Lagos." +
                     "Es liviana, de veta fina y fácil de trabajar.",
             usos = listOf("Muebles", "Chapas decorativas", "Tornería", "Artesanía")
         ),
@@ -89,7 +89,7 @@ object MaderaRepositorio {
             descripcion = "Madera de tono rojizo a rosado, de veta fina y muy fácil de trabajar. " +
                     "Se encuentra entre la Región del Maule y la Región de Los Lagos." +
                     "Es una de las maderas nativas más apreciadas en Chile por su belleza y estabilidad.",
-            usos = listOf("Muebles finos", "Puertas y ventanas", "Revistimientos", "Pisos")
+            usos = listOf("Muebles finos", "Puertas y ventanas", "Revestimientos", "Pisos")
         ),
         Madera(
             id = 8,
