@@ -135,7 +135,7 @@ fun Scanner(navController: NavController) {
             }
 
             Spacer(modifier = Modifier.height(12.dp))
-
+//btn de simular error
             TextButton(onClick = { mostrarError = true }) {
                 Text("Simular Error de Lectura", color = TextoOscuro.copy(alpha = 0.6f))
             }
@@ -152,7 +152,7 @@ fun Scanner(navController: NavController) {
                     Button(
                         onClick = {
                             mostrarExito = false
-                            navController.navigate("detalleMadera")
+                            navController.navigate("detalleMadera/1")
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = VerdeBoton)
                     ) {

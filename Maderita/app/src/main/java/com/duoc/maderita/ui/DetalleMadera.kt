@@ -1,6 +1,7 @@
 package com.duoc.maderita.ui
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
@@ -16,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -31,13 +34,16 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.duoc.maderita.model.Madera
 import com.duoc.maderita.repository.MaderaRepositorio
+import com.duoc.maderita.ui.theme.*
 
 @Composable
 fun DetalleMadera(navController: NavController, maderaId: Int) {
     val madera = MaderaRepositorio.obtenerMaderaPorId(maderaId)
 
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .background(FondoCrema)
             .systemBarsPadding()
             .padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -58,7 +64,11 @@ fun DetalleMadera(navController: NavController, maderaId: Int) {
 
         Button(
             onClick = { navController.popBackStack() },
-            modifier = Modifier.fillMaxWidth()
+            colors = ButtonDefaults.buttonColors(containerColor = VerdeBoton),
+            shape = RoundedCornerShape(25.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
         ) {
             Text("Volver")
         }
@@ -94,15 +104,17 @@ private fun ContenidoDetalle(madera: Madera) {
         Etiqueta("Dureza: ${madera.dureza}")
     }
 
-    HorizontalDivider(thickness = 1.dp)
+    HorizontalDivider(thickness = 1.dp, color = VerdePalido)
 
     SeccionDetalle(titulo = "Descripción") {
-        Text(madera.descripcion, style = MaterialTheme.typography.bodyLarge)
+        Text(madera.descripcion, style = MaterialTheme.typography.bodyLarge,
+            color = TextoOscuro)
     }
 
     SeccionDetalle(titulo = "Usos principales") {
         madera.usos.forEach { uso -> Text("•  $uso",
-            style = MaterialTheme.typography.bodyLarge)
+            style = MaterialTheme.typography.bodyLarge,
+            color = TextoOscuro)
         }
     }
 }
@@ -111,16 +123,16 @@ private fun ContenidoDetalle(madera: Madera) {
 private fun Etiqueta(texto: String) {
     Surface(
         shape = RoundedCornerShape(50),
-        color = MaterialTheme.colorScheme.secondaryContainer
+        color = VerdePalido
     ) {
         Text(
             text = texto,
             style = MaterialTheme.typography.labelLarge,
+            color = TextoOscuro,
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
         )
     }
 }
-
 
 @Composable
 private fun SeccionDetalle(titulo: String, contenido: @Composable ColumnScope.() -> Unit) {
@@ -129,7 +141,8 @@ private fun SeccionDetalle(titulo: String, contenido: @Composable ColumnScope.()
         Text(
             text = titulo,
             style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            color = TextoOscuro
         )
         contenido()
     }
