@@ -38,7 +38,6 @@ android {
 }
 
 dependencies {
-    implementation("androidx.core:core-splashscreen:1.2.0")
     implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.navigation:navigation-compose:2.10.2")
     implementation(platform(libs.androidx.compose.bom))
