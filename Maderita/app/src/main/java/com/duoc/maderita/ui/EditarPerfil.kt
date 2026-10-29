@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -13,12 +14,16 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.duoc.maderita.R
 import com.duoc.maderita.repository.UsuarioRepositorio
+import com.duoc.maderita.ui.theme.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun EditarPerfil(navController: NavController) {
@@ -28,6 +33,8 @@ fun EditarPerfil(navController: NavController) {
     var telefono by remember { mutableStateOf(usuario.telefono) }
     var email by remember { mutableStateOf(usuario.correo) }
     var contrasena by remember { mutableStateOf("12345678") }
+    var cargando by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
@@ -43,12 +50,14 @@ fun EditarPerfil(navController: NavController) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = { navController.popBackStack() }) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver",
+                    tint = TextoOscuro)
             }
             Text(
                 text = "Editar Perfil",
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
+                color = TextoOscuro,
                 modifier = Modifier.padding(start = 8.dp)
             )
         }
@@ -101,16 +110,40 @@ fun EditarPerfil(navController: NavController) {
 
         Button(
             onClick = {
-                UsuarioRepositorio.actualizarUsuarioActual(
-                    nombreCompleto = nombreCompleto,
-                    telefono = telefono,
-                    correo = email
-                )
-                navController.popBackStack()
+                cargando = true
+                scope.launch {
+                    delay(1500)
+                    UsuarioRepositorio.actualizarUsuarioActual(
+                        nombreCompleto = nombreCompleto,
+                        telefono = telefono,
+                        correo = email
+                    )
+                    cargando = false
+                    navController.popBackStack()
+                }
             },
-            modifier = Modifier.fillMaxWidth()
+            enabled = !cargando,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = VerdeBoton
+            ),
+            shape = RoundedCornerShape(25.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
         ) {
-            Text("Guardar Cambios")
+            if (cargando) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(22.dp),
+                    strokeWidth = 2.5.dp,
+                    color = Color.White
+                )
+            } else {
+                Text(
+                    text = "Guardar Cambios",
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold
+                )
+            }
         }
     }
 }
