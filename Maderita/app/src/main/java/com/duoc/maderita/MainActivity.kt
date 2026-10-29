@@ -8,10 +8,12 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.duoc.maderita.repository.SesionRepositorio
 import com.duoc.maderita.ui.Navegacion
+import com.duoc.maderita.ui.PantallaCarga
 import com.duoc.maderita.ui.theme.MaderitaTheme
 import com.duoc.maderita.viewmodel.CargaViewModel
 
@@ -21,10 +23,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         // Abre el archivo donde se guarda la sesión
         SesionRepositorio.iniciar(applicationContext)
-
-        // La splash se mantiene visible hasta que el ViewModel indique que la app está lista
-        val splash = installSplashScreen()
-        splash.setKeepOnScreenCondition { !cargaViewModel.listo.value }
 
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -38,7 +36,15 @@ class MainActivity : ComponentActivity() {
         setContent {
             MaderitaTheme {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    Navegacion(destinoInicial = destinoInicial)
+                    val listo by cargaViewModel.listo.collectAsState()
+
+                    // Mientras carga se muestra la pantalla de carga, después lleva a la app normal
+                    if (listo){
+                        Navegacion(destinoInicial = destinoInicial)
+                    } else {
+                        PantallaCarga()
+                    }
+
                 }
             }
         }
