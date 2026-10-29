@@ -30,7 +30,7 @@ import com.duoc.maderita.ui.theme.*
 @Composable
 fun PerfilUsuario(navController: NavController) {
     val usuario = UsuarioRepositorio.usuarioActual
-    val maderasGuardadas = listOf("Trepén", "Pino", "Roble", "Raulí", "Coigüe", "Alerce")
+    val maderasGuardadas = listOf("Avellano chileno", "Ciprés de la cordillera", "Coigüe/Coihue", "Laurel", "Lenga", "Pino Radiata")
 
     Column(
         modifier = Modifier
