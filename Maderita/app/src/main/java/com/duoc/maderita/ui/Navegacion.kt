@@ -18,16 +18,14 @@ fun Navegacion(destinoInicial: String) {
         composable("escaner") { Scanner(navController = navController) }
         composable("perfil") { PerfilUsuario(navController = navController) }
         composable("editarPerfil") { EditarPerfil(navController = navController) }
-        composable("agregarUsuarios") { AgregarUsuarios(navController = navController) }
-        composable("listaUsuarios") { ListaUsuarios(navController = navController) }
         composable("tiposMadera") { TiposMadera(navController = navController) }
 
-    //ruta sin ID, carga la priemra
+        // Ruta sin ID: carga la primera madera
         composable("detalleMadera") {
             DetalleMadera(navController = navController, maderaId = 1)
         }
 
-        //Detalle de un tipo de madera: recibe el id en la ruta
+        // Detalle de un tipo de madera: recibe el id en la ruta
         composable(
             route = "detalleMadera/{id}",
             arguments = listOf(navArgument("id") { type = NavType.IntType })
