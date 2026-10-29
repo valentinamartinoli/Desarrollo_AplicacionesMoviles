@@ -46,6 +46,15 @@ El sistema visual utiliza una paleta en tonos verdes y crema extraídos de refer
 
 ---
 
+## Inicio de sesión y sesión guardada
+
+* Inicio de sesión: el usuario ingresa su nombre y contraseña. Por ahora solo se valida que los campos no estén vacíos.
+* Sesión guardada: el nombre y la contraseña se guardan en el celular con SharedPreferences (`SesionRepositorio`). Si el usuario no cierra sesión, al volver a abrir la app entra directo al Home.
+* Cierre de sesión: el botón "Cerrar Sesión" del perfil borra la sesión guardada y vuelve al login.
+* Registro de usuario: formulario con validación de nombre, correo, contraseña (mínimo 8 caracteres y un número), confirmación de contraseña, perfil y términos (`RegistroScreen`, `RegistroViewModel` y `ValidadorRegistro`).
+
+---
+
 ## Estructura del Proyecto
 
 ```text
