@@ -13,11 +13,39 @@ Maderita es una aplicación móvil nativa para Android desarrollada con Jetpack 
 
 ## Características Principales
 
-* Pantalla de Carga (Splash Screen) Personalizada: Animación de carga sincronizada mediante CargaViewModel y la API de AndroidX SplashScreen con el logo principal (`@drawable/logo_splash`).
-* Escáner e Identificación: Módulo interactivo con animación de línea de escaneo para procesar lecturas de madera y desplegar información detallada o simular errores de captura.
-* Catálogo de Maderas: Muestrario interactivo en la pantalla principal (`HomeScreen`) cargado desde `MaderaRepositorio`.
-* Perfil de Usuario: Visualización de información personal, historial de maderas escaneadas y opciones de sesión desde `PerfilUsuario`.
-* Diseño Verde/Crema Consistente: Paleta de colores orgánicos y componentes limpios ajustados a la experiencia visual de la marca.
+* Pantalla de Carga Personalizada: pantalla con el logo y un indicador de carga que se muestra unos segundos al abrir la app, controlada por `CargaViewModel` (`PantallaCarga`).
+* Inicio de sesión y registro: login con sesión guardada en el celular y formulario de registro con validación de campos.
+* Escáner e Identificación: módulo interactivo con animación de línea de escaneo y uso de la cámara del celular para tomar la foto, que muestra el resultado de la lectura o un error de lectura mediante modales.
+* Catálogo de Maderas: muestrario interactivo en la pantalla principal (`HomeScreen`) cargado desde `MaderaRepositorio`, y ficha detallada de cada madera (`DetalleMadera`).
+* Perfil de Usuario: visualización de información personal, historial de maderas escaneadas, edición de datos (`EditarPerfil`) y opciones de sesión desde `PerfilUsuario`.
+* Diseño Verde/Crema Consistente: paleta de colores orgánicos y componentes limpios ajustados a la experiencia visual de la marca.
+
+---
+
+## Cómo ejecutar el proyecto
+
+1. Clonar el repositorio: `git clone https://github.com/valentinamartinoli/Desarrollo_AplicacionesMoviles.git`
+2. Abrir con Android Studio la carpeta **`Maderita`**. El proyecto Android está en esa subcarpeta, no en la raíz del repositorio.
+3. Esperar a que termine la sincronización de Gradle (Sync Now).
+4. Ejecutar la aplicación (Run) en un emulador o en un celular Android.
+
+Requisitos: una versión reciente de Android Studio compatible con el Android Gradle Plugin 9.2.1, Kotlin 2.2.10 y un dispositivo con Android 7.0 (API 24) o superior. El Scanner usa la cámara del dispositivo y pide el permiso al momento de usarla.
+
+---
+
+## Pantallas de la Aplicación
+
+| Pantalla | Archivo | Descripción |
+| :--- | :--- | :--- |
+| Carga | `PantallaCarga.kt` | Logo e indicador de carga al abrir la app |
+| Inicio de sesión | `Login.kt` | Nombre y contraseña (solo se valida que no estén vacíos) y modal de inicio de sesión exitoso |
+| Registro de usuario | `RegistroScreen.kt` | Formulario con validaciones y modal de registro exitoso |
+| Home | `HomeScreen.kt` | Pantalla principal con accesos al escáner, al perfil y al catálogo de maderas |
+| Escáner | `Scanner.kt` | Toma una foto con la cámara y muestra el resultado en un modal |
+| Tipos de madera | `TiposMadera.kt` | Listado de los tipos de madera |
+| Detalle de madera | `DetalleMadera.kt` | Ficha detallada de una madera |
+| Perfil de usuario | `PerfilUsuario.kt` | Datos del usuario, maderas escaneadas y cierre de sesión |
+| Editar perfil | `EditarPerfil.kt` | Edición de los datos del perfil |
 
 ---
 
@@ -42,13 +70,14 @@ El sistema visual utiliza una paleta en tonos verdes y crema extraídos de refer
 * Gestión de Estado: `StateFlow` y `mutableStateOf`
 * Navegación: Jetpack Navigation Compose
 * Asincronía: Kotlin Coroutines (`viewModelScope`)
-* Splash Screen: `androidx.core:core-splashscreen`
+* Persistencia de sesión: SharedPreferences (`SesionRepositorio`)
+* Cámara: `ActivityResultContracts.TakePicture` con `FileProvider`
 
 ---
 
 ## Inicio de sesión y sesión guardada
 
-* Inicio de sesión: el usuario ingresa su nombre y contraseña. Por ahora solo se valida que los campos no estén vacíos.
+* Inicio de sesión: el usuario ingresa su nombre y contraseña. Por ahora solo se valida que los campos no estén vacíos. Al ingresar aparece un modal de inicio de sesión exitoso.
 * Sesión guardada: el nombre y la contraseña se guardan en el celular con SharedPreferences (`SesionRepositorio`). Si el usuario no cierra sesión, al volver a abrir la app entra directo al Home.
 * Cierre de sesión: el botón "Cerrar Sesión" del perfil borra la sesión guardada y vuelve al login.
 * Registro de usuario: formulario con validación de nombre, correo, contraseña (mínimo 8 caracteres y un número), confirmación de contraseña, perfil y términos (`RegistroScreen`, `RegistroViewModel` y `ValidadorRegistro`).
@@ -62,21 +91,36 @@ com.duoc.maderita
 │
 ├── model/
 │   ├── Madera.kt
-│   └── Usuario.kt
+│   ├── Usuario.kt
+│   └── ValidadorRegistro.kt
 │
 ├── repository/
 │   ├── MaderaRepositorio.kt
+│   ├── SesionRepositorio.kt
 │   └── UsuarioRepositorio.kt
 │
 ├── viewmodel/
-│   └── CargaViewModel.kt
+│   ├── CargaViewModel.kt
+│   ├── LoginViewModel.kt
+│   └── RegistroViewModel.kt
 │
 ├── ui/
+│   ├── ComponentesFormulario.kt
+│   ├── DetalleMadera.kt
+│   ├── EditarPerfil.kt
 │   ├── HomeScreen.kt
-│   ├── Scanner.kt
+│   ├── Login.kt
+│   ├── Navegacion.kt
+│   ├── PantallaCarga.kt
 │   ├── PerfilUsuario.kt
-│   ├── PantallaCargaLogo.kt
+│   ├── RegistroScreen.kt
+│   ├── Scanner.kt
+│   ├── TiposMadera.kt
 │   └── theme/
-│       └── MaderitaTheme.kt
+│       ├── Color.kt
+│       ├── Theme.kt
+│       └── Type.kt
 │
 └── MainActivity.kt
+```
+
