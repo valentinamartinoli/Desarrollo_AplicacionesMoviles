@@ -53,7 +53,11 @@ fun Login(navController: NavController, loginViewModel: LoginViewModel = viewMod
             onClick = {
                 // Solo entra si los dos campos tienen algo escrito
                 if (loginViewModel.validarIngreso()) {
-                    navController.navigate("home")
+                    loginViewModel.guardarSesion()
+                    // Se borra el login de la pila para que "atrás" no vuelva a él
+                    navController.navigate("home") {
+                        popUpTo("login") { inclusive = true }
+                    }
                 }
             },
             modifier = Modifier.fillMaxWidth()

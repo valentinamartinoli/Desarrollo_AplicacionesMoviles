@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.duoc.maderita.repository.SesionRepositorio
 
 class LoginViewModel : ViewModel() {
 
@@ -30,5 +31,10 @@ class LoginViewModel : ViewModel() {
         errorNombre = if (nombre.isBlank()) "Ingresa tu nombre" else ""
         errorContrasena = if (contrasena.isBlank()) "Ingresa tu contraseña" else ""
         return errorNombre == "" && errorContrasena == ""
+    }
+
+    // Guarda el usuario en el celular y deja la sesión iniciada
+    fun guardarSesion() {
+        SesionRepositorio.guardarSesion(nombre.trim(), contrasena)
     }
 }

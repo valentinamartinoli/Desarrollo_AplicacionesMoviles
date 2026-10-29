@@ -152,7 +152,7 @@ fun HomeScreen(navController: NavController) {
             }
 // madera
             Card(
-                onClick = { navController.navigate("detalleMadera") },
+                onClick = { navController.navigate("tiposMadera") },
                 modifier = Modifier.weight(1f),
                 shape = RoundedCornerShape(16.dp),
                 colors = CardDefaults.cardColors(
@@ -165,7 +165,7 @@ fun HomeScreen(navController: NavController) {
                 ) {
                     Text("🪵", fontSize = 32.sp)
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text("Detalle Madera", fontWeight = FontWeight.Bold, color = TextoOscuro)
+                    Text("Tipos de Madera", fontWeight = FontWeight.Bold, color = TextoOscuro)
                 }
             }
         }
