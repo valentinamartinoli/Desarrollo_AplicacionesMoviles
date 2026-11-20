@@ -38,7 +38,7 @@ Requisitos: una versión reciente de Android Studio compatible con el Android Gr
 | Pantalla | Archivo | Descripción |
 | :--- | :--- | :--- |
 | Carga | `PantallaCarga.kt` | Logo e indicador de carga al abrir la app |
-| Inicio de sesión | `Login.kt` | Nombre y contraseña (solo se valida que no estén vacíos) y modal de inicio de sesión exitoso |
+| Inicio de sesión | `Login.kt` | Correo y contraseña validados con Xano y modal de inicio de sesión exitoso |
 | Registro de usuario | `RegistroScreen.kt` | Formulario con validaciones y modal de registro exitoso |
 | Home | `HomeScreen.kt` | Pantalla principal con accesos al escáner, al perfil y al catálogo de maderas |
 | Escáner | `Scanner.kt` | Toma una foto con la cámara y muestra el resultado en un modal |
@@ -66,21 +66,67 @@ El sistema visual utiliza una paleta en tonos verdes y crema extraídos de refer
 
 * Lenguaje: Kotlin
 * UI Framework: Jetpack Compose con Material 3
-* Arquitectura: MVVM (Model-View-ViewModel)
+* Arquitectura: MVVM (Model-View-ViewModel). Las pantallas solo muestran datos y envían eventos al ViewModel; toda llamada a red está en un repositorio.
 * Gestión de Estado: `StateFlow` y `mutableStateOf`
 * Navegación: Jetpack Navigation Compose
 * Asincronía: Kotlin Coroutines (`viewModelScope`)
-* Persistencia de sesión: SharedPreferences (`SesionRepositorio`)
+* Base de datos local: Room (catálogo de maderas y sesión del usuario)
+* Backend: Xano (API REST) consumido con Retrofit y Gson
+* API externa: Open-Meteo (clima del día en el Home)
 * Cámara: `ActivityResultContracts.TakePicture` con `FileProvider`
+* Pruebas unitarias: JUnit 4, kotlinx-coroutines-test y MockWebServer
+
+---
+
+## Backend en Xano
+
+La app usa dos grupos de la API de Xano (las URLs están en `remote/Apis.kt`, objeto `ClienteRetrofit`).
+
+| Método | Endpoint | Uso en la app | Requiere token |
+| :--- | :--- | :--- | :--- |
+| GET | `/madera` | Catálogo de maderas (Home y Tipos de madera) | No |
+| GET | `/madera/{id}` | Ficha de una madera | No |
+| POST | `/auth/signup` | Registro de usuario | No |
+| POST | `/auth/login` | Inicio de sesión (devuelve el token) | No |
+| GET | `/auth/me` | Datos del usuario con sesión iniciada | Sí |
+| PATCH | `/user/{id}` | Guardar los cambios de Editar perfil | Sí |
+| POST | `/escaneo` | Guardar un escaneo con su foto | Sí |
+| GET | `/escaneo` | Historial de maderas escaneadas del perfil | Sí |
+| DELETE | `/escaneo/{id}` | Borrar un escaneo del historial | Sí |
+
+La API externa Open-Meteo (`GET /v1/forecast`) se consume aparte, sin pasar por Xano.
+
+---
+
+## Base de datos local (Room)
+
+* `maderas`: copia del catálogo de Xano. Permite ver las maderas sin internet después de la primera carga.
+* `usuario`: usuario con la sesión iniciada y su token de Xano. Reemplaza a SharedPreferences.
+
+La primera vez hay que abrir la app con internet para descargar el catálogo.
+
+---
+
+## Pruebas unitarias
+
+Las pruebas están en `app/src/test/java/com/duoc/maderita`:
+
+| Carpeta | Qué comprueba |
+| :--- | :--- |
+| `model` | Reglas de `ValidadorRegistro` y fotos de cada madera |
+| `viewmodel` | Login, Registro, Carga, Catálogo, Perfil y Escáner con repositorios falsos |
+| `repository` | Cada endpoint de Xano y la API del clima con un servidor local (MockWebServer) |
+
+Para ejecutarlas: `.\gradlew.bat :app:testDebugUnitTest` en la carpeta `Maderita`, o clic derecho en `app/src/test/java` y **Run**.
 
 ---
 
 ## Inicio de sesión y sesión guardada
 
-* Inicio de sesión: el usuario ingresa su nombre y contraseña. Por ahora solo se valida que los campos no estén vacíos. Al ingresar aparece un modal de inicio de sesión exitoso.
-* Sesión guardada: el nombre y la contraseña se guardan en el celular con SharedPreferences (`SesionRepositorio`). Si el usuario no cierra sesión, al volver a abrir la app entra directo al Home.
-* Cierre de sesión: el botón "Cerrar Sesión" del perfil borra la sesión guardada y vuelve al login.
-* Registro de usuario: formulario con validación de nombre, correo, contraseña (mínimo 8 caracteres y un número), confirmación de contraseña, perfil y términos (`RegistroScreen`, `RegistroViewModel` y `ValidadorRegistro`).
+* Inicio de sesión: el usuario ingresa su correo y contraseña. La app los envía a Xano (`auth/login`), recibe un token y pide los datos del usuario (`auth/me`). Si algo falla se muestra un mensaje en la pantalla.
+* Sesión guardada: el usuario y su token se guardan en Room. Si no cierra sesión, al volver a abrir la app entra directo al Home.
+* Cierre de sesión: el botón "Cerrar Sesión" del perfil marca la sesión como cerrada en Room y vuelve al login.
+* Registro de usuario: formulario con validación de nombre, correo, contraseña (mínimo 8 caracteres y un número), confirmación de contraseña, perfil y términos (`RegistroScreen`, `RegistroViewModel` y `ValidadorRegistro`). Al validar, crea la cuenta en Xano (`auth/signup`).
 
 ---
 
@@ -90,18 +136,29 @@ El sistema visual utiliza una paleta en tonos verdes y crema extraídos de refer
 com.duoc.maderita
 │
 ├── model/
+│   ├── ImagenesMadera.kt
 │   ├── Madera.kt
 │   ├── Usuario.kt
 │   └── ValidadorRegistro.kt
 │
+├── local/          (Room: entidades, DAOs y base de datos)
+├── remote/         (Retrofit: APIs de Xano, API del clima y sus modelos)
+│
 ├── repository/
+│   ├── ClimaRepositorio.kt
+│   ├── EscaneoRepositorio.kt
 │   ├── MaderaRepositorio.kt
-│   ├── SesionRepositorio.kt
 │   └── UsuarioRepositorio.kt
 │
 ├── viewmodel/
 │   ├── CargaViewModel.kt
+│   ├── CatalogoViewModel.kt
+│   ├── ClimaViewModel.kt
+│   ├── DetalleMaderaViewModel.kt
+│   ├── EscanerViewModel.kt
+│   ├── FabricaViewModel.kt
 │   ├── LoginViewModel.kt
+│   ├── PerfilViewModel.kt
 │   └── RegistroViewModel.kt
 │
 ├── ui/
@@ -121,6 +178,7 @@ com.duoc.maderita
 │       ├── Theme.kt
 │       └── Type.kt
 │
+├── MaderitaApp.kt
 └── MainActivity.kt
 ```
 
