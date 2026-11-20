@@ -15,9 +15,20 @@ class ClimaViewModel(private val repositorio: ClimaRepositorio) : ViewModel() {
     var clima by mutableStateOf<Clima?>(null)
         private set
 
+    // Nombre del lugar que se muestra en la tarjeta
+    var lugar by mutableStateOf("Santiago")
+        private set
+
+    // Al abrir el Home se muestra el clima de Santiago
     init {
+        cargarClima(-33.45, -70.66, "Santiago")
+    }
+
+    // Pide el clima de unas coordenadas y guarda el nombre del lugar
+    fun cargarClima(latitud: Double, longitud: Double, nombreLugar: String) {
         viewModelScope.launch {
-            clima = repositorio.obtenerClima().getOrNull()
+            clima = repositorio.obtenerClima(latitud, longitud).getOrNull()
+            lugar = nombreLugar
         }
     }
 }

@@ -33,10 +33,10 @@ class ClimaRepositorioImplTest {
         paso("PREPARACION", "el servidor local responderá 17.3 grados y 62% de humedad")
         servidor.enqueue(MockResponse().setBody("""{"current":{"temperature_2m":17.3,"relative_humidity_2m":62.0}}"""))
 
-        paso("ACCION", "pedir el clima")
-        val resultado = repositorio.obtenerClima()
+        paso("ACCION", "pedir el clima de las coordenadas de Santiago")
+        val resultado = repositorio.obtenerClima(-33.45, -70.66)
 
-        paso("COMPROBACION", "se consultó la coordenada de Santiago y el clima salió bien convertido")
+        paso("COMPROBACION", "se consultaron las coordenadas recibidas y el clima salió bien convertido")
         assertEquals(Clima(17.3, 62.0), resultado.getOrNull())
         val ruta = servidor.takeRequest().path!!
         assertTrue(ruta.startsWith("/v1/forecast"))
@@ -49,13 +49,13 @@ class ClimaRepositorioImplTest {
     fun `una respuesta incompleta es un fallo`() = runTest {
         servidor.enqueue(MockResponse().setBody("""{"current":{"temperature_2m":17.3}}"""))
 
-        assertTrue(repositorio.obtenerClima().isFailure)
+        assertTrue(repositorio.obtenerClima(-33.45, -70.66).isFailure)
     }
 
     @Test
     fun `un error del servidor es un fallo`() = runTest {
         servidor.enqueue(MockResponse().setResponseCode(500))
 
-        assertTrue(repositorio.obtenerClima().isFailure)
+        assertTrue(repositorio.obtenerClima(-33.45, -70.66).isFailure)
     }
 }
