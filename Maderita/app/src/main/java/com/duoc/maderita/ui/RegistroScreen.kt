@@ -10,12 +10,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.duoc.maderita.viewmodel.FabricaViewModel
 import com.duoc.maderita.viewmodel.RegistroViewModel
 
 @Composable
 fun RegistroScreen(
     navController: NavController,
-    registroViewModel: RegistroViewModel = viewModel()
+    registroViewModel: RegistroViewModel = viewModel(factory = FabricaViewModel.Fabrica)
 ) {
     // Indica si el menú de perfiles está abierto o cerrado
     var menuPerfilAbierto by remember { mutableStateOf(false) }
@@ -96,11 +97,21 @@ fun RegistroScreen(
             Text(text = registroViewModel.errorTerminos, color = MaterialTheme.colorScheme.error)
         }
 
+        // Error que viene de Xano o de la conexión
+        if (registroViewModel.errorGeneral != "") {
+            Text(text = registroViewModel.errorGeneral, color = MaterialTheme.colorScheme.error)
+        }
+
         Button(
             onClick = { registroViewModel.registrar() },
+            enabled = !registroViewModel.cargando,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Registrarse")
+            if (registroViewModel.cargando) {
+                CircularProgressIndicator(modifier = Modifier.size(22.dp), strokeWidth = 2.5.dp)
+            } else {
+                Text("Registrarse")
+            }
         }
 
         TextButton(onClick = { navController.popBackStack() }) {

@@ -11,8 +11,12 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -21,16 +25,22 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.duoc.maderita.R
-import com.duoc.maderita.repository.SesionRepositorio
-import com.duoc.maderita.repository.UsuarioRepositorio
 import com.duoc.maderita.ui.theme.*
+import com.duoc.maderita.viewmodel.FabricaViewModel
+import com.duoc.maderita.viewmodel.PerfilViewModel
 
 @Composable
-fun PerfilUsuario(navController: NavController) {
-    val usuario = UsuarioRepositorio.usuarioActual
-    val maderasGuardadas = listOf("Avellano chileno", "Ciprés de la cordillera", "Coigüe/Coihue", "Laurel", "Lenga", "Pino Radiata")
+fun PerfilUsuario(
+    navController: NavController,
+    perfilViewModel: PerfilViewModel = viewModel(factory = FabricaViewModel.Fabrica)
+) {
+    val usuario by perfilViewModel.usuario.collectAsState()
+
+    // Cada vez que se abre el perfil se pide el historial de escaneos a Xano
+    LaunchedEffect(Unit) { perfilViewModel.cargarHistorial() }
 
     Column(
         modifier = Modifier
@@ -84,18 +94,18 @@ fun PerfilUsuario(navController: NavController) {
                     Spacer(modifier = Modifier.width(16.dp))
                     Column {
                         Text(
-                            text = "${usuario.nombre} ${usuario.apellido}",
+                            text = "${usuario?.nombre.orEmpty()} ${usuario?.apellido.orEmpty()}",
                             fontWeight = FontWeight.Bold,
                             fontSize = 18.sp,
                             color = TextoOscuro
                         )
                         Text(
-                            text = usuario.correo,
+                            text = usuario?.correo.orEmpty(),
                             fontSize = 14.sp,
                             color = TextoOscuro.copy(alpha = 0.8f)
                         )
                         Text(
-                            text = usuario.telefono,
+                            text = usuario?.telefono.orEmpty(),
                             fontSize = 14.sp,
                             color = TextoOscuro.copy(alpha = 0.8f)
                         )
@@ -120,9 +130,10 @@ fun PerfilUsuario(navController: NavController) {
                     OutlinedButton(
                         onClick = {
                             // Borra la sesión guardada para que la app abra en el login la próxima vez
-                            SesionRepositorio.cerrarSesion()
-                            navController.navigate("login") {
-                                popUpTo(0)
+                            perfilViewModel.cerrarSesion {
+                                navController.navigate("login") {
+                                    popUpTo(0)
+                                }
                             }
                         },
                         modifier = Modifier.weight(1f),
@@ -145,6 +156,10 @@ fun PerfilUsuario(navController: NavController) {
             color = TextoOscuro
         )
 
+        if (perfilViewModel.error != "") {
+            Text(text = perfilViewModel.error, color = MaterialTheme.colorScheme.error)
+        }
+
         Spacer(modifier = Modifier.height(12.dp))
 
         LazyVerticalGrid(
@@ -153,9 +168,9 @@ fun PerfilUsuario(navController: NavController) {
             verticalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.weight(1f)
         ) {
-            items(maderasGuardadas) { madera ->
+            items(perfilViewModel.historial, key = { it.id }) { escaneo ->
                 Card(
-                    onClick = { navController.navigate("detalleMadera") },
+                    onClick = { navController.navigate("detalleMadera/${escaneo.maderaId}") },
                     shape = RoundedCornerShape(12.dp),
                     colors = CardDefaults.cardColors(
                         containerColor = VerdePalido.copy(alpha = 0.5f)
@@ -169,16 +184,29 @@ fun PerfilUsuario(navController: NavController) {
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.maderita),
-                            contentDescription = madera,
+                            contentDescription = escaneo.nombreMadera,
                             modifier = Modifier.size(40.dp)
                         )
                         Spacer(modifier = Modifier.height(6.dp))
                         Text(
-                            text = madera,
+                            text = escaneo.nombreMadera,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = TextoOscuro
                         )
+                        Text(
+                            text = "${(escaneo.confianza * 100).toInt()}% de coincidencia",
+                            fontSize = 11.sp,
+                            color = TextoOscuro.copy(alpha = 0.8f)
+                        )
+                        // DELETE escaneo/{id}
+                        IconButton(onClick = { perfilViewModel.eliminarEscaneo(escaneo.id) }) {
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = "Eliminar escaneo",
+                                tint = TextoOscuro
+                            )
+                        }
                     }
                 }
             }

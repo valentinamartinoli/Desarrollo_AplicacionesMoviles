@@ -6,10 +6,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -17,13 +13,14 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.duoc.maderita.R
+import com.duoc.maderita.viewmodel.FabricaViewModel
 import com.duoc.maderita.viewmodel.LoginViewModel
 
 @Composable
-fun Login(navController: NavController, loginViewModel: LoginViewModel = viewModel()) {
-    // Indica si el modal de inicio de sesión exitoso está abierto
-    var abrirModalIngreso by remember { mutableStateOf(false) }
-
+fun Login(
+    navController: NavController,
+    loginViewModel: LoginViewModel = viewModel(factory = FabricaViewModel.Fabrica)
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -43,10 +40,10 @@ fun Login(navController: NavController, loginViewModel: LoginViewModel = viewMod
         TituloVista("INICIO SESIÓN")
 
         CampoTexto(
-            valor = loginViewModel.nombre,
-            etiqueta = "Nombre",
-            error = loginViewModel.errorNombre,
-            alCambiar = { loginViewModel.cambiarNombre(it) }
+            valor = loginViewModel.correo,
+            etiqueta = "Correo electrónico",
+            error = loginViewModel.errorCorreo,
+            alCambiar = { loginViewModel.cambiarCorreo(it) }
         )
         CampoTexto(
             valor = loginViewModel.contrasena,
@@ -56,17 +53,21 @@ fun Login(navController: NavController, loginViewModel: LoginViewModel = viewMod
             esContrasena = true
         )
 
+        // Error que viene de Xano o de la conexión
+        if (loginViewModel.errorGeneral != "") {
+            Text(text = loginViewModel.errorGeneral, color = MaterialTheme.colorScheme.error)
+        }
+
         Button(
-            onClick = {
-                // Solo entra si los dos campos tienen algo escrito
-                if (loginViewModel.validarIngreso()) {
-                    loginViewModel.guardarSesion()
-                    abrirModalIngreso = true
-                }
-            },
+            onClick = { loginViewModel.ingresar() },
+            enabled = !loginViewModel.cargando,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Iniciar sesión")
+            if (loginViewModel.cargando) {
+                CircularProgressIndicator(modifier = Modifier.size(22.dp), strokeWidth = 2.5.dp)
+            } else {
+                Text("Iniciar sesión")
+            }
         }
 
         TextButton(onClick = { navController.navigate("registro") }) {
@@ -75,15 +76,15 @@ fun Login(navController: NavController, loginViewModel: LoginViewModel = viewMod
     }
 
     // Modal que aparece cuando el inicio de sesión es correcto
-    if (abrirModalIngreso) {
+    if (loginViewModel.ingresoExitoso) {
         AlertDialog(
             onDismissRequest = { },
             title = { Text("Inicio de sesión exitoso") },
-            text = { Text("Bienvenido/a, ${loginViewModel.nombre.trim()}") },
+            text = { Text("Bienvenido/a, ${loginViewModel.nombreBienvenida}") },
             confirmButton = {
                 Button(
                     onClick = {
-                        abrirModalIngreso = false
+                        loginViewModel.ingresoExitoso = false
                         // Se borra el login de la pila para que "atrás" no vuelva a él
                         navController.navigate("home") {
                             popUpTo("login") { inclusive = true }

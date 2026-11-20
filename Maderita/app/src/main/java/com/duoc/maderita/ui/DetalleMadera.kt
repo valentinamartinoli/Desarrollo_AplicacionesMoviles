@@ -24,6 +24,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -31,14 +33,23 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.duoc.maderita.model.Madera
-import com.duoc.maderita.repository.MaderaRepositorio
+import com.duoc.maderita.viewmodel.DetalleMaderaViewModel
+import com.duoc.maderita.viewmodel.FabricaViewModel
 import com.duoc.maderita.ui.theme.*
 
 @Composable
-fun DetalleMadera(navController: NavController, maderaId: Int) {
-    val madera = MaderaRepositorio.obtenerMaderaPorId(maderaId)
+fun DetalleMadera(
+    navController: NavController,
+    maderaId: Int,
+    detalleViewModel: DetalleMaderaViewModel = viewModel(
+        key = "detalleMadera$maderaId",
+        factory = FabricaViewModel.fabricaDetalle(maderaId)
+    )
+) {
+    val madera by detalleViewModel.madera.collectAsState()
 
     Column(
         modifier = Modifier
@@ -54,11 +65,12 @@ fun DetalleMadera(navController: NavController, maderaId: Int) {
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            if (madera == null) {
+            val maderaActual = madera
+            if (maderaActual == null) {
                 TituloVista("MADERA NO ENCONTRADA")
                 Text("No existe información para esta madera")
             } else {
-                ContenidoDetalle(madera)
+                ContenidoDetalle(maderaActual)
             }
         }
 

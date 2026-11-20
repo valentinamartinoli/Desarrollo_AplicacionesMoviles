@@ -20,17 +20,12 @@ fun Navegacion(destinoInicial: String) {
         composable("editarPerfil") { EditarPerfil(navController = navController) }
         composable("tiposMadera") { TiposMadera(navController = navController) }
 
-        // Ruta sin ID: carga la primera madera
-        composable("detalleMadera") {
-            DetalleMadera(navController = navController, maderaId = 1)
-        }
-
         // Detalle de un tipo de madera: recibe el id en la ruta
         composable(
             route = "detalleMadera/{id}",
             arguments = listOf(navArgument("id") { type = NavType.IntType })
         ) { backStackEntry ->
-            val id = backStackEntry.arguments?.getInt("id") ?: 1
+            val id = backStackEntry.arguments?.getInt("id") ?: 0
             DetalleMadera(navController = navController, maderaId = id)
         }
     }

@@ -14,6 +14,8 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,17 +25,27 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.duoc.maderita.R
-import com.duoc.maderita.repository.MaderaRepositorio
-import com.duoc.maderita.repository.UsuarioRepositorio
 import com.duoc.maderita.ui.theme.*
+import com.duoc.maderita.viewmodel.CatalogoViewModel
+import com.duoc.maderita.viewmodel.ClimaViewModel
+import com.duoc.maderita.viewmodel.FabricaViewModel
+import com.duoc.maderita.viewmodel.PerfilViewModel
 
 
 @Composable
-fun HomeScreen(navController: NavController) {
-    val usuario = UsuarioRepositorio.usuarioActual
-    val maderasEjemplo = MaderaRepositorio.obtenerMaderas().take(4)
+fun HomeScreen(
+    navController: NavController,
+    perfilViewModel: PerfilViewModel = viewModel(factory = FabricaViewModel.Fabrica),
+    catalogoViewModel: CatalogoViewModel = viewModel(factory = FabricaViewModel.Fabrica),
+    climaViewModel: ClimaViewModel = viewModel(factory = FabricaViewModel.Fabrica)
+) {
+    val usuario by perfilViewModel.usuario.collectAsState()
+    val maderas by catalogoViewModel.maderas.collectAsState()
+    val maderasEjemplo = maderas.take(4)
+    val clima = climaViewModel.clima
 
     Column(
         modifier = Modifier
@@ -101,13 +113,13 @@ fun HomeScreen(navController: NavController) {
                 Spacer(modifier = Modifier.width(16.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "¡Hola, ${usuario.nombre}!",
+                        text = "¡Hola, ${usuario?.nombre.orEmpty()}!",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = TextoOscuro
                     )
                     Text(
-                        text = usuario.correo,
+                        text = usuario?.correo.orEmpty(),
                         style = MaterialTheme.typography.bodySmall,
                         color = TextoOscuro.copy(alpha = 0.8f)
                     )
@@ -117,6 +129,23 @@ fun HomeScreen(navController: NavController) {
                     style = MaterialTheme.typography.labelMedium,
                     fontWeight = FontWeight.Bold,
                     color = TextoOscuro
+                )
+            }
+        }
+
+        // Clima del día (API externa). Si no se pudo cargar, la tarjeta no se muestra.
+        if (clima != null) {
+            Spacer(modifier = Modifier.height(12.dp))
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = VerdePalido.copy(alpha = 0.5f))
+            ) {
+                Text(
+                    text = "Hoy en Santiago: ${clima.temperatura}°C, humedad ${clima.humedad.toInt()}%",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = TextoOscuro,
+                    modifier = Modifier.padding(12.dp)
                 )
             }
         }
@@ -191,7 +220,7 @@ fun HomeScreen(navController: NavController) {
         ) {
             items(maderasEjemplo) { madera ->
                 Card(
-                    onClick = { navController.navigate("detalleMadera") },
+                    onClick = { navController.navigate("detalleMadera/${madera.id}") },
                     shape = RoundedCornerShape(12.dp),
                     colors = CardDefaults.cardColors(
                         containerColor = VerdePalido.copy(alpha = 0.5f)

@@ -14,8 +14,12 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,13 +28,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.duoc.maderita.model.Madera
-import com.duoc.maderita.repository.MaderaRepositorio
+import com.duoc.maderita.viewmodel.CatalogoViewModel
+import com.duoc.maderita.viewmodel.FabricaViewModel
 
 @Composable
-fun TiposMadera(navController: NavController) {
-    val maderas = MaderaRepositorio.obtenerMaderas()
+fun TiposMadera(
+    navController: NavController,
+    catalogoViewModel: CatalogoViewModel = viewModel(factory = FabricaViewModel.Fabrica)
+) {
+    val maderas by catalogoViewModel.maderas.collectAsState()
 
     // crear grid
     Column(
@@ -40,6 +49,14 @@ fun TiposMadera(navController: NavController) {
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         TituloVista("Tipos de madera")
+
+        // Si Xano no respondió, se avisa y se puede reintentar (se siguen mostrando las maderas guardadas)
+        if (catalogoViewModel.error != "") {
+            Text(text = catalogoViewModel.error, color = MaterialTheme.colorScheme.error)
+            TextButton(onClick = { catalogoViewModel.refrescar() }) {
+                Text("Reintentar")
+            }
+        }
 
         // grid de 2 columnas, 1 tarjeta por cada madera
         LazyVerticalGrid(

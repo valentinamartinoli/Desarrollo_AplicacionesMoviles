@@ -32,9 +32,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.duoc.maderita.viewmodel.EscanerViewModel
+import com.duoc.maderita.viewmodel.FabricaViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
 import java.io.File
 
 private val FondoCrema = Color(0xFFF0F1E5)
@@ -42,13 +46,28 @@ private val VerdePalido = Color(0xFFC2CFB0)
 private val VerdeBoton = Color(0xFF7EAA6E)
 private val TextoOscuro = Color(0xFF1F4D36)
 
+// Reduce la foto y la convierte a JPEG para enviarla a Xano sin gastar tantos datos
+private fun Bitmap.aJpeg(ladoMaximo: Int = 1024): ByteArray {
+    val escala = ladoMaximo.toFloat() / maxOf(width, height)
+    val reducida = if (escala < 1f) {
+        Bitmap.createScaledBitmap(this, (width * escala).toInt(), (height * escala).toInt(), true)
+    } else {
+        this
+    }
+    val salida = ByteArrayOutputStream()
+    reducida.compress(Bitmap.CompressFormat.JPEG, 80, salida)
+    return salida.toByteArray()
+}
+
 @Composable
-fun Scanner(navController: NavController) {
+fun Scanner(
+    navController: NavController,
+    escanerViewModel: EscanerViewModel = viewModel(factory = FabricaViewModel.Fabrica)
+) {
     val context = LocalContext.current
     var imageUri by remember { mutableStateOf<Uri?>(null) }
     var bitmap by remember { mutableStateOf<Bitmap?>(null) }
     var escanearEstado by remember { mutableStateOf(false) }
-    var mostrarExito by remember { mutableStateOf(false) }
     var mostrarError by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
@@ -85,7 +104,8 @@ fun Scanner(navController: NavController) {
                 scope.launch {
                     delay(2000)
                     escanearEstado = false
-                    mostrarExito = true
+                    // Identifica la madera y guarda el escaneo en Xano (POST escaneo)
+                    bitmap?.let { escanerViewModel.procesarFoto(it.aJpeg()) }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -257,42 +277,67 @@ fun Scanner(navController: NavController) {
             }
         }
 
-        if (mostrarExito) {
+        val maderaIdentificada = escanerViewModel.maderaIdentificada
+        if (maderaIdentificada != null) {
             AlertDialog(
-                onDismissRequest = { mostrarExito = false },
+                onDismissRequest = { escanerViewModel.reiniciar() },
                 shape = RoundedCornerShape(20.dp),
                 containerColor = VerdePalido,
                 title = { Text("¡Escaneo Exitoso!", fontWeight = FontWeight.Bold, color = TextoOscuro) },
-                text = { Text("Esta es la Madera #1 (Avellano chileno)", color = TextoOscuro) },
+                text = {
+                    Column {
+                        Text(
+                            "Esta es: ${maderaIdentificada.nombre} " +
+                                "(${(escanerViewModel.confianza * 100).toInt()}% de coincidencia)",
+                            color = TextoOscuro
+                        )
+                        // Si no se pudo guardar en Xano, se avisa pero igual se puede ver la ficha
+                        if (escanerViewModel.error != "") {
+                            Text(escanerViewModel.error, color = MaterialTheme.colorScheme.error)
+                        }
+                    }
+                },
                 confirmButton = {
                     Button(
                         onClick = {
-                            mostrarExito = false
-                            navController.navigate("detalleMadera/1")
+                            escanerViewModel.reiniciar()
+                            navController.navigate("detalleMadera/${maderaIdentificada.id}")
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = VerdeBoton)
                     ) {
-                        Text("Ver Ficha Madera #1", color = Color.White)
+                        Text("Ver Ficha", color = Color.White)
                     }
                 },
                 dismissButton = {
-                    TextButton(onClick = { mostrarExito = false }) {
+                    TextButton(onClick = { escanerViewModel.reiniciar() }) {
                         Text("OK", color = TextoOscuro)
                     }
                 }
             )
         }
 
-        if (mostrarError) {
+        // Error de la cámara, o de la app cuando todavía no hay catálogo para identificar la madera
+        if (mostrarError || (maderaIdentificada == null && escanerViewModel.error != "")) {
             AlertDialog(
-                onDismissRequest = { mostrarError = false },
+                onDismissRequest = {
+                    mostrarError = false
+                    escanerViewModel.reiniciar()
+                },
                 shape = RoundedCornerShape(20.dp),
                 containerColor = VerdePalido,
                 title = { Text("Error de Lectura", color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.Bold) },
-                text = { Text("No se pudo tomar la foto o se denegó el permiso de la cámara.", color = TextoOscuro) },
+                text = {
+                    Text(
+                        escanerViewModel.error.ifEmpty { "No se pudo tomar la foto o se denegó el permiso de la cámara." },
+                        color = TextoOscuro
+                    )
+                },
                 confirmButton = {
                     Button(
-                        onClick = { mostrarError = false },
+                        onClick = {
+                            mostrarError = false
+                            escanerViewModel.reiniciar()
+                        },
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
                     ) {
                         Text("OK", color = Color.White)

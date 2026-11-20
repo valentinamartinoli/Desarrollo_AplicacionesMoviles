@@ -4,9 +4,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.duoc.maderita.model.ValidadorRegistro
+import com.duoc.maderita.repository.UsuarioRepositorio
+import com.duoc.maderita.repository.mensajeParaUsuario
+import kotlinx.coroutines.launch
 
-class RegistroViewModel : ViewModel() {
+class RegistroViewModel(private val usuarios: UsuarioRepositorio) : ViewModel() {
 
     // Opciones del menú de perfiles (los perfiles definidos en el caso CENAMAD)
     val listaPerfiles = listOf(
@@ -32,6 +36,11 @@ class RegistroViewModel : ViewModel() {
     var errorConfirmacion by mutableStateOf("")
     var errorPerfil by mutableStateOf("")
     var errorTerminos by mutableStateOf("")
+
+    // Error que viene de Xano o de la conexión
+    var errorGeneral by mutableStateOf("")
+
+    var cargando by mutableStateOf(false)
 
     // Cuando es true, la pantalla muestra el modal de registro exitoso
     var registroExitoso by mutableStateOf(false)
@@ -67,8 +76,10 @@ class RegistroViewModel : ViewModel() {
         errorTerminos = ""
     }
 
-    // Revisa todos los campos. Si ninguno tiene error, el registro es exitoso
+    // Revisa todos los campos. Si ninguno tiene error, crea la cuenta en Xano
     fun registrar() {
+        if (cargando) return
+        errorGeneral = ""
         errorNombre = ValidadorRegistro.validarNombre(nombre)
         errorCorreo = ValidadorRegistro.validarCorreo(correo)
         errorContrasena = ValidadorRegistro.validarContrasena(contrasena)
@@ -76,9 +87,23 @@ class RegistroViewModel : ViewModel() {
         errorPerfil = ValidadorRegistro.validarPerfil(perfil)
         errorTerminos = ValidadorRegistro.validarTerminos(terminosAceptados)
 
-        registroExitoso = errorNombre == "" && errorCorreo == "" &&
+        val camposValidos = errorNombre == "" && errorCorreo == "" &&
                 errorContrasena == "" && errorConfirmacion == "" &&
                 errorPerfil == "" && errorTerminos == ""
+        if (!camposValidos) return
+
+        cargando = true
+        viewModelScope.launch {
+            val resultado = usuarios.registrar(nombre, correo, contrasena)
+            if (resultado.isSuccess) {
+                registroExitoso = true
+            } else {
+                errorGeneral = resultado.exceptionOrNull()
+                    ?.mensajeParaUsuario("No se pudo registrar. Es posible que el correo ya esté en uso")
+                    ?: "Ocurrió un error inesperado"
+            }
+            cargando = false
+        }
     }
 
     // Deja el formulario vacío después de un registro exitoso

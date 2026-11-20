@@ -18,23 +18,24 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.duoc.maderita.R
-import com.duoc.maderita.repository.UsuarioRepositorio
 import com.duoc.maderita.ui.theme.*
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import com.duoc.maderita.viewmodel.FabricaViewModel
+import com.duoc.maderita.viewmodel.PerfilViewModel
 
 @Composable
-fun EditarPerfil(navController: NavController) {
-    val usuario = UsuarioRepositorio.usuarioActual
+fun EditarPerfil(
+    navController: NavController,
+    perfilViewModel: PerfilViewModel = viewModel(factory = FabricaViewModel.Fabrica)
+) {
+    val usuario by perfilViewModel.usuario.collectAsState()
 
-    var nombreCompleto by remember { mutableStateOf("${usuario.nombre} ${usuario.apellido}") }
-    var telefono by remember { mutableStateOf(usuario.telefono) }
-    var email by remember { mutableStateOf(usuario.correo) }
-    var contrasena by remember { mutableStateOf("12345678") }
-    var cargando by remember { mutableStateOf(false) }
-    val scope = rememberCoroutineScope()
+    // Si los datos del usuario llegan después de abrir la pantalla, el formulario se llena con ellos
+    var nombreCompleto by remember(usuario) { mutableStateOf("${usuario?.nombre.orEmpty()} ${usuario?.apellido.orEmpty()}".trim()) }
+    var telefono by remember(usuario) { mutableStateOf(usuario?.telefono.orEmpty()) }
+    var email by remember(usuario) { mutableStateOf(usuario?.correo.orEmpty()) }
 
     Column(
         modifier = Modifier
@@ -99,30 +100,21 @@ fun EditarPerfil(navController: NavController) {
             etiqueta = "Email",
             alCambiar = { email = it }
         )
-        CampoTexto(
-            valor = contrasena,
-            etiqueta = "Contraseña",
-            alCambiar = { contrasena = it },
-            esContrasena = true
-        )
+
+        if (perfilViewModel.error != "") {
+            Text(text = perfilViewModel.error, color = MaterialTheme.colorScheme.error)
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
+            // PATCH user/{id}: guarda en Xano y vuelve al perfil cuando termina bien
             onClick = {
-                cargando = true
-                scope.launch {
-                    delay(1500)
-                    UsuarioRepositorio.actualizarUsuarioActual(
-                        nombreCompleto = nombreCompleto,
-                        telefono = telefono,
-                        correo = email
-                    )
-                    cargando = false
+                perfilViewModel.guardarCambios(nombreCompleto, telefono, email) {
                     navController.popBackStack()
                 }
             },
-            enabled = !cargando,
+            enabled = !perfilViewModel.cargando,
             colors = ButtonDefaults.buttonColors(
                 containerColor = VerdeBoton
             ),
@@ -131,7 +123,7 @@ fun EditarPerfil(navController: NavController) {
                 .fillMaxWidth()
                 .height(50.dp)
         ) {
-            if (cargando) {
+            if (perfilViewModel.cargando) {
                 CircularProgressIndicator(
                     modifier = Modifier.size(22.dp),
                     strokeWidth = 2.5.dp,
