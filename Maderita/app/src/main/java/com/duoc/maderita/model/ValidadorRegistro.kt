@@ -1,12 +1,13 @@
 package com.duoc.maderita.model
 
-import android.util.Patterns
-
 /**
  * Reglas de validación del formulario de registro.
  * Cada función devuelve el mensaje de error, o "" si el valor es correcto.
  */
 object ValidadorRegistro {
+
+    // Formato básico de correo: texto@dominio.extensión
+    private val formatoCorreo = Regex("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")
 
     fun validarNombre(nombre: String): String {
         if (nombre.isBlank()) return "El nombre es obligatorio"
@@ -17,8 +18,7 @@ object ValidadorRegistro {
 
     fun validarCorreo(correo: String): String {
         if (correo.isBlank()) return "El correo es obligatorio"
-        // Android trae una regla lista para revisar si el correo tiene formato válido
-        if (!Patterns.EMAIL_ADDRESS.matcher(correo).matches()) return "Ingresa un correo válido"
+        if (!formatoCorreo.matches(correo)) return "Ingresa un correo válido"
         return ""
     }
 
