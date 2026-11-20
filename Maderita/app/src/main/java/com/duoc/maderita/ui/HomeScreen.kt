@@ -1,5 +1,12 @@
 package com.duoc.maderita.ui
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationManager
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -19,12 +26,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.duoc.maderita.R
@@ -46,6 +54,19 @@ fun HomeScreen(
     val maderas by catalogoViewModel.maderas.collectAsState()
     val maderasEjemplo = maderas.take(4)
     val clima = climaViewModel.clima
+    val contexto = LocalContext.current
+
+    // Pide el permiso de ubicación. Si el usuario acepta, se carga el clima de donde está
+    val permisoUbicacion = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { concedido ->
+        if (concedido) {
+            val ubicacion = obtenerUbicacion(contexto)
+            if (ubicacion != null) {
+                climaViewModel.cargarClima(ubicacion.latitude, ubicacion.longitude, "tu ubicación")
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -55,7 +76,7 @@ fun HomeScreen(
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // header(?
+        // Encabezado con el logo y el acceso al perfil
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -87,7 +108,7 @@ fun HomeScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Un card con el profile del usuario
+        // Tarjeta con los datos del usuario
         Card(
             onClick = { navController.navigate("perfil") },
             modifier = Modifier.fillMaxWidth(),
@@ -141,18 +162,24 @@ fun HomeScreen(
                 shape = RoundedCornerShape(16.dp),
                 colors = CardDefaults.cardColors(containerColor = VerdePalido.copy(alpha = 0.5f))
             ) {
-                Text(
-                    text = "Hoy en Santiago: ${clima.temperatura}°C, humedad ${clima.humedad.toInt()}%",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = TextoOscuro,
-                    modifier = Modifier.padding(12.dp)
-                )
+                Column(modifier = Modifier.padding(12.dp)) {
+                    Text(
+                        text = "Hoy en ${climaViewModel.lugar}: ${clima.temperatura}°C, humedad ${clima.humedad.toInt()}%",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = TextoOscuro
+                    )
+                    TextButton(
+                        onClick = { permisoUbicacion.launch(Manifest.permission.ACCESS_COARSE_LOCATION) }
+                    ) {
+                        Text("Usar mi ubicación")
+                    }
+                }
             }
         }
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // botoness
+        // Botones de acceso al escáner y a los tipos de madera
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -179,7 +206,7 @@ fun HomeScreen(
                     Text("Scanner", fontWeight = FontWeight.Bold, color = TextoOscuro)
                 }
             }
-// madera
+
             Card(
                 onClick = { navController.navigate("tiposMadera") },
                 modifier = Modifier.weight(1f),
@@ -201,7 +228,7 @@ fun HomeScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Ejmplos de maderitas
+        // Ejemplos de maderas del catálogo
         Text(
             text = "Ejemplos de Madera",
             style = MaterialTheme.typography.titleMedium,
@@ -250,4 +277,13 @@ fun HomeScreen(
             }
         }
     }
+}
+
+// Última ubicación conocida del celular (null si no hay permiso o no hay datos)
+private fun obtenerUbicacion(contexto: Context): Location? {
+    val permiso = ContextCompat.checkSelfPermission(contexto, Manifest.permission.ACCESS_COARSE_LOCATION)
+    if (permiso != PackageManager.PERMISSION_GRANTED) return null
+
+    val manager = contexto.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    return manager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
 }

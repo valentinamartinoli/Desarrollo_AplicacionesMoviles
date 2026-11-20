@@ -7,13 +7,13 @@ data class Clima(val temperatura: Double, val humedad: Double)
 
 // Clima actual desde una API externa (Open-Meteo). No usa los endpoints propios de Xano.
 interface ClimaRepositorio {
-    suspend fun obtenerClima(): Result<Clima>
+    suspend fun obtenerClima(latitud: Double, longitud: Double): Result<Clima>
 }
 
 class ClimaRepositorioImpl(private val api: ClimaApi) : ClimaRepositorio {
 
-    override suspend fun obtenerClima(): Result<Clima> = try {
-        val actual = api.obtenerClima(LATITUD_SANTIAGO, LONGITUD_SANTIAGO).actual
+    override suspend fun obtenerClima(latitud: Double, longitud: Double): Result<Clima> = try {
+        val actual = api.obtenerClima(latitud, longitud).actual
         val temperatura = actual?.temperatura
         val humedad = actual?.humedad
         if (temperatura == null || humedad == null) {
@@ -25,10 +25,5 @@ class ClimaRepositorioImpl(private val api: ClimaApi) : ClimaRepositorio {
         throw e
     } catch (e: Exception) {
         Result.failure(e)
-    }
-
-    private companion object {
-        const val LATITUD_SANTIAGO = -33.45
-        const val LONGITUD_SANTIAGO = -70.66
     }
 }

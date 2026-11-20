@@ -79,11 +79,7 @@ fun EditarPerfil(
             )
         }
 
-        TextButton(onClick = { navController.navigate("escaner") }) {
-            Text("Cambiar foto (img.png)")
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         CampoTexto(
             valor = nombreCompleto,

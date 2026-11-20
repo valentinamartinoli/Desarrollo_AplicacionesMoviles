@@ -269,12 +269,6 @@ fun Scanner(
                     )
                 }
             }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            TextButton(onClick = { mostrarError = true }) {
-                Text("Simular Error de Lectura", color = TextoOscuro.copy(alpha = 0.6f))
-            }
         }
 
         val maderaIdentificada = escanerViewModel.maderaIdentificada
@@ -288,7 +282,7 @@ fun Scanner(
                     Column {
                         Text(
                             "Esta es: ${maderaIdentificada.nombre} " +
-                                "(${(escanerViewModel.confianza * 100).toInt()}% de coincidencia)",
+                                    "(${(escanerViewModel.confianza * 100).toInt()}% de coincidencia)",
                             color = TextoOscuro
                         )
                         // Si no se pudo guardar en Xano, se avisa pero igual se puede ver la ficha
