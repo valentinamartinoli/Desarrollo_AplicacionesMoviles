@@ -35,11 +35,13 @@ class UsuarioRepositorioFalso : UsuarioRepositorio {
     val llamadasLogin = mutableListOf<Pair<String, String>>()
     val llamadasRegistro = mutableListOf<Triple<String, String, String>>()
     var sesionCerrada = false
+    var ultimoPerfilRegistrado = ""
 
     override suspend fun haySesionActiva() = sesionActiva
 
-    override suspend fun registrar(nombre: String, correo: String, contrasena: String): Result<Unit> {
+    override suspend fun registrar(nombre: String, correo: String, contrasena: String, perfil: String): Result<Unit> {
         llamadasRegistro.add(Triple(nombre, correo, contrasena))
+        ultimoPerfilRegistrado = perfil
         return resultadoRegistro
     }
 

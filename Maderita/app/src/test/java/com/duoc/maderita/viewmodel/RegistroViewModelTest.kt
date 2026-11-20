@@ -74,6 +74,7 @@ class RegistroViewModelTest {
             listOf(Triple("Valentina Martinoli", "v@maderita.cl", "clave1234")),
             repositorio.llamadasRegistro
         )
+        assertEquals(viewModel.perfil, repositorio.ultimoPerfilRegistrado)
         assertTrue(viewModel.registroExitoso)
         assertFalse(viewModel.cargando)
         paso("CORRECTO", "el registro terminó bien")

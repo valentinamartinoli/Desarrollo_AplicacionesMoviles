@@ -87,10 +87,10 @@ class UsuarioRepositorioImplTest {
     }
 
     @Test
-    fun `registrar envia nombre, correo y contrasena a auth signup`() = runTest {
+    fun `registrar envia nombre, correo, contrasena y perfil a auth signup`() = runTest {
         servidor.enqueue(MockResponse().setBody("""{"authToken":"NUEVO"}"""))
 
-        val resultado = repositorio.registrar(" Valentina Martinoli ", "v@maderita.cl", "clave1234")
+        val resultado = repositorio.registrar(" Valentina Martinoli ", "v@maderita.cl", "clave1234", " Carpintero ")
 
         assertTrue(resultado.isSuccess)
         val solicitud = servidor.takeRequest()
@@ -100,6 +100,7 @@ class UsuarioRepositorioImplTest {
         assertTrue(cuerpo.contains("\"name\":\"Valentina Martinoli\""))
         assertTrue(cuerpo.contains("\"email\":\"v@maderita.cl\""))
         assertTrue(cuerpo.contains("\"password\":\"clave1234\""))
+        assertTrue(cuerpo.contains("\"perfil\":\"Carpintero\""))
         // Registrarse no inicia sesión: el usuario debe entrar por el login
         assertFalse(repositorio.haySesionActiva())
     }

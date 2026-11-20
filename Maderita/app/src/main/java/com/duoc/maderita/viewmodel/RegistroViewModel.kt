@@ -94,7 +94,7 @@ class RegistroViewModel(private val usuarios: UsuarioRepositorio) : ViewModel() 
 
         cargando = true
         viewModelScope.launch {
-            val resultado = usuarios.registrar(nombre, correo, contrasena)
+            val resultado = usuarios.registrar(nombre, correo, contrasena, perfil)
             if (resultado.isSuccess) {
                 registroExitoso = true
             } else {

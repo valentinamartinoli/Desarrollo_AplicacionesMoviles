@@ -20,7 +20,7 @@ interface UsuarioRepositorio {
     suspend fun haySesionActiva(): Boolean
 
     // POST auth/signup
-    suspend fun registrar(nombre: String, correo: String, contrasena: String): Result<Unit>
+    suspend fun registrar(nombre: String, correo: String, contrasena: String, perfil: String = ""): Result<Unit>
 
     // POST auth/login + GET auth/me; guarda el usuario y su token en Room
     suspend fun iniciarSesion(correo: String, contrasena: String): Result<Unit>
@@ -47,8 +47,8 @@ class UsuarioRepositorioImpl(
 
     override suspend fun haySesionActiva(): Boolean = dao.obtenerSesion() != null
 
-    override suspend fun registrar(nombre: String, correo: String, contrasena: String): Result<Unit> = try {
-        api.registrar(SignupRequest(name = nombre.trim(), email = correo.trim(), password = contrasena))
+    override suspend fun registrar(nombre: String, correo: String, contrasena: String, perfil: String): Result<Unit> = try {
+        api.registrar(SignupRequest(name = nombre.trim(), email = correo.trim(), password = contrasena, perfil = perfil.trim()))
         Result.success(Unit)
     } catch (e: CancellationException) {
         throw e
