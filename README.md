@@ -174,7 +174,7 @@ La primera vez hay que abrir la app con internet para descargar el catálogo.
 
 ## Pruebas unitarias
 
-Hay 61 pruebas unitarias en `app/src/test/java/com/duoc/maderita`:
+Hay 64 pruebas unitarias en `app/src/test/java/com/duoc/maderita`:
 
 | Carpeta | Qué comprueba |
 | :--- | :--- |
