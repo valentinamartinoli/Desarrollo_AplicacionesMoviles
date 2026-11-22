@@ -61,7 +61,7 @@ class EscaneoRepositorioImpl(
             confianza = confianza.toString().toRequestBody(texto),
             notas = notas.toRequestBody(texto),
             imagen = MultipartBody.Part.createFormData(
-                "imagen_escaneada",
+                "foto",
                 "escaneo.jpg",
                 foto.toRequestBody("image/jpeg".toMediaType())
             )
